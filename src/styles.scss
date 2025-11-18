@@ -1,0 +1,32 @@
+@import 'tailwindcss/base';
+@import '@muziehdesign/components/design/_base';
+@import 'tailwindcss/components';
+@import '@muziehdesign/components/design/_button';
+@import '@muziehdesign/components/design/_dl';
+@import '@muziehdesign/components/design/_dropdown-menu';
+@import '@muziehdesign/components/design/_pagination';
+@import '@muziehdesign/components/design/_table';
+@import '@muziehdesign/components/design/_tabs';
+@import '@muziehdesign/components/design/_progress-bar';
+@import '@muziehdesign/components/design/_alert';
+@import '@muziehdesign/components/design/_date-picker';
+@import 'tailwindcss/utilities';
+@import '@muziehdesign/components/design/_utilities';
+@import '@muziehdesign/components/design/_form';
+
+// TODO:
+a {
+    @apply text-gray-700;
+}
+
+h1 {
+    @apply mt-0.5;
+}
+html,
+body {
+    height: 100%;
+}
+body {
+    margin: 0;
+    font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
