@@ -534,7 +534,7 @@ class InconsistentService {
 
 ```typescript
 // ❌ DON'T: Query in loops
-async function getUsers WithPosts() {
+async function getUsersWithPosts() {
   const users = await db.users.findAll();
   for (const user of users) {
     user.posts = await db.posts.findByUserId(user.id); // N+1!
