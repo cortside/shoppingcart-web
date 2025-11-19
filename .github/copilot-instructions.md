@@ -11,9 +11,9 @@
 **Status**: ⚠️ **In Development - React Rewrite** (replacing legacy Angular implementation)
 
 **Key Documentation**:
-- `docs/Overview.md` - Executive summary of features and scope
-- `docs/Functional & Behavioral Requirements.md` - User stories, functional requirements, acceptance criteria
-- `docs/Technical & Architectural Specification.md` - Implementation guide with data models, API contracts, architecture decisions
+- `docs/requirements/Overview.md` - Executive summary of features and scope
+- `docs/requirements/Functional & Behavioral Requirements.md` - User stories, functional requirements, acceptance criteria
+- `docs/architecture/Technical & Architectural Specification.md` - Implementation guide with data models, API contracts, architecture decisions
 
 ## Critical Prerequisites
 
