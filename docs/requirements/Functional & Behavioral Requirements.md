@@ -217,3 +217,31 @@ Each requirement includes an ID for traceability.
 - **Profile:** The saved customer information associated with a logged‑in user.
 - **Visitor:** A user who is not currently authenticated.
 - **Logged‑in User:** A user who has successfully authenticated via IdentityServer.
+
+---
+
+## 8. Implementation Mapping Aids
+
+This section is intended to make it easy to go from requirements to concrete routes, pages, and behaviors when creating implementation plans or generating code.
+
+### 8.1 Routes to Functional Requirements
+
+| Route                      | Description              | Related FRs                                   |
+|----------------------------|--------------------------|-----------------------------------------------|
+| `/`                        | Redirect to `/catalog`   | FR‑001–FR‑004 (via `/catalog`)                |
+| `/catalog`                 | Catalog list             | FR‑001, FR‑002, FR‑003, FR‑004                |
+| `/product/:sku`            | Product detail           | FR‑005, FR‑006                                |
+| `/cart`                    | Cart view/edit           | FR‑007, FR‑008, FR‑009, FR‑010, FR‑011        |
+| `/checkout`                | Checkout flow            | FR‑012, FR‑013, FR‑013A, FR‑014, FR‑014A, FR‑015, FR‑016, FR‑017, FR‑018 |
+| `/account/orders`          | Order history            | FR‑012, FR‑019                                |
+| `/account/orders/:orderId` | Order detail             | FR‑012, FR‑020                                |
+| `/account/profile`         | Profile view/edit        | FR‑012, FR‑021, FR‑022                        |
+
+### 8.2 Cart Persistence Behavior
+
+To align with the technical design (client‑side cart with local persistence), the following functional behavior is assumed for implementation:
+
+- **FR‑023 (Cart Persistence):**  
+  The system SHOULD persist the cart between browser sessions for up to 7 days using local storage, and clear the persisted cart after a successful order is placed.
+
+If this behavior changes in future phases, both this requirement and the corresponding state management documentation should be updated together.

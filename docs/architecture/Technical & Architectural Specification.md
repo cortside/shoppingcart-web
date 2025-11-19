@@ -110,6 +110,27 @@ src/
         - `AppRoutes`
       - `Footer`
 
+    ### 2.3 Section-to-File Mapping (Implementation Guide)
+
+    The following table maps this specification to concrete implementation files, to support planning and code generation:
+
+    | Spec Section                          | Responsibility                                   | Suggested File(s)                           |
+    |---------------------------------------|--------------------------------------------------|---------------------------------------------|
+    | 3. Routing Specification              | Route configuration & auth gating                | `src/routes/AppRoutes.tsx`, `src/auth/RequireAuth.tsx` |
+    | 4. Data Models                        | Shared domain types                              | `src/types/Catalog.ts`, `src/types/Customer.ts`, `src/types/Orders.ts`, `src/types/Cart.ts`, `src/types/Auth.ts` |
+    | 5.1 Catalog API                       | Catalog HTTP client                              | `src/api/catalogApi.ts`                     |
+    | 5.2 ShoppingCart API                  | Customer & order HTTP client                     | `src/api/shoppingCartApi.ts`                |
+    | 6. Authentication & Authorization     | OIDC integration & auth flow                     | `src/auth/oidcClient.ts`, `src/auth/authProvider.tsx` |
+    | 6.2 Protected Routes                  | Route protection wrapper                         | `src/auth/RequireAuth.tsx`                  |
+    | 6.3 Customer Mapping                  | Managing `customerResourceId` in auth state      | `src/contexts/AuthContext.tsx`              |
+    | 7.1 AuthContext                       | Auth state & actions                             | `src/contexts/AuthContext.tsx`              |
+    | 7.2–7.3 CartContext & persistence    | Cart state, derived values, and localStorage     | `src/contexts/CartContext.tsx`, `src/utils/storage.ts` |
+    | 8. Error Handling & Validation        | HTTP client wrapper & form validation mapping    | `src/utils/httpClient.ts`, `src/utils/validation.ts` |
+    | 9. Performance & Caching              | Client-side caching utilities (optional)         | `src/utils/cache.ts`                        |
+    | 12. Environment & Configuration       | Runtime configuration loading                     | `src/utils/config.ts`                        |
+
+    These mappings are recommendations and can be adjusted as needed, but they provide a direct bridge from documentation to concrete implementation files.
+
 ---
 
 ## 3. Routing Specification
@@ -470,14 +491,42 @@ Implement an HTTP interceptor/middleware that:
 
 ### 8.1 HTTP Errors
 
-Use a unified `httpClient` wrapper:
+Use a unified `httpClient` wrapper so all API calls share consistent behavior:
 
 - On `4xx` with validation payload:
-  - Map `ErrorsModel.errors` to form fields.
+  - Map `ErrorsModel.errors` to form fields (see 8.3).
 - On `401` for protected routes:
   - Trigger re‑login or redirect to login.
 - On `5xx`:
-  - Show generic error and optionally retry.
+  - Show a generic error and optionally retry non-mutating requests.
+
+#### 8.1.1 Suggested `httpClient` Shape
+
+The client MAY be implemented as a thin wrapper around `fetch` or a library like axios. The important behaviors are:
+
+```ts
+interface HttpRequestOptions {
+  params?: Record<string, string | number | boolean | undefined>;
+  body?: unknown;
+  requiresAuth?: boolean; // when true, Authorization header MUST be added
+}
+
+async function get<TResponse>(url: string, options?: HttpRequestOptions): Promise<TResponse>;
+
+async function post<TBody, TResponse>(
+  url: string,
+  body: TBody,
+  options?: HttpRequestOptions
+): Promise<TResponse>;
+
+async function put<TBody, TResponse>(
+  url: string,
+  body: TBody,
+  options?: HttpRequestOptions
+): Promise<TResponse>;
+```
+
+Token injection behavior is described in section 6.6. All API wrappers in `src/api` SHOULD use this `httpClient` instead of calling `fetch` directly.
 
 ### 8.2 Validation Rules (Client‑Side)
 
@@ -486,6 +535,54 @@ Use a unified `httpClient` wrapper:
   - Address: street, city, state, country, zipCode
 - Email format basic check.
 - Birthdate format `YYYY‑MM‑DD`.
+
+### 8.3 ErrorsModel Shape (Server-Side Validation)
+
+The ShoppingCart API uses `ErrorsModel` for validation and other error responses. From Swagger:
+
+```json
+"Cortside.AspNetCore.Common.Models.ErrorModel": {
+  "type": "object",
+  "properties": {
+    "type": { "type": "string", "nullable": true },
+    "property": { "type": "string", "nullable": true },
+    "message": { "type": "string", "nullable": true },
+    "exception": { "nullable": true }
+  },
+  "additionalProperties": false
+},
+"Cortside.AspNetCore.Common.Models.ErrorsModel": {
+  "type": "object",
+  "properties": {
+    "errors": {
+      "type": "array",
+      "items": { "$ref": "#/components/schemas/Cortside.AspNetCore.Common.Models.ErrorModel" },
+      "nullable": true
+    }
+  },
+  "additionalProperties": false
+}
+```
+
+The SPA SHOULD define equivalent TypeScript types, for example:
+
+```ts
+export interface ErrorModel {
+  type?: string | null;
+  property?: string | null;
+  message?: string | null;
+  exception?: unknown | null;
+}
+
+export interface ErrorsModel {
+  errors?: ErrorModel[] | null;
+}
+```
+
+When an API call returns a non-success status with an `ErrorsModel` body, the UI SHOULD:
+
+- Collect all `errors[*].message` into a general error summary, and
+- For any `errors[*].property`, map messages to the corresponding form field (e.g., `email`, `birthDate`, `address.street`).
 
 ---
 
