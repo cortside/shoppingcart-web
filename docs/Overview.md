@@ -9,24 +9,9 @@ The goal: **Enable customers to easily browse items, manage a cart, check out, a
 
 ---
 
-## **2. Key Business Objectives**
+## **2. Core Features**
 
-- **Increase revenue** by providing a direct, user-friendly digital purchasing channel.
-    
-- **Improve customer experience** with modern, responsive UI and intuitive checkout flow.
-    
-- **Strengthen customer insights** through consistent customer identity and order tracking.
-    
-- **Reduce support overhead** by giving customers direct access to order history and profile information.
-    
-- **Lay groundwork for future personalization, loyalty programs, and promotions.**
-    
-
----
-
-## **3. Core Features**
-
-### **3.1 Catalog Browsing**
+### **2.1 Catalog Browsing**
 
 - Public catalog available without login.
     
@@ -35,7 +20,7 @@ The goal: **Enable customers to easily browse items, manage a cart, check out, a
 - Product detail pages with images, descriptions, and pricing.
     
 
-### **3.2 Shopping Cart**
+### **2.2 Shopping Cart**
 
 - Add items to cart directly from catalog or item detail pages.
     
@@ -44,16 +29,16 @@ The goal: **Enable customers to easily browse items, manage a cart, check out, a
 - Cart persists throughout the session.
     
 
-### **3.3 User Authentication**
+### **2.3 User Authentication**
 
-- Secure login powered by Acme’s existing IdentityServer platform.
+- Secure login powered by Acme's existing IdentityServer platform.
     
 - Authentication required **only during checkout**.
     
-- Customers tied to their unique identity via a standard OIDC “subject” claim.
+- Customers tied to their unique identity via a standard OIDC "subject" claim.
     
 
-### **3.4 Checkout Experience**
+### **2.4 Checkout Experience**
 
 - Simple and guided checkout flow.
     
@@ -64,14 +49,14 @@ The goal: **Enable customers to easily browse items, manage a cart, check out, a
 - Payment processing is out of scope for this version.
     
 
-### **3.5 Customer Profile**
+### **2.5 Customer Profile**
 
 - Customers can review and update their personal information.
     
 - Profile syncs with the ShoppingCart API customer model.
     
 
-### **3.6 Order History**
+### **2.6 Order History**
 
 - Logged-in users can view past orders.
     
@@ -80,7 +65,7 @@ The goal: **Enable customers to easily browse items, manage a cart, check out, a
 
 ---
 
-## **4. User Experience Highlights**
+## **3. User Experience Highlights**
 
 - **Modern, responsive UI** (optimized for desktop, tablet, and mobile).
     
@@ -95,7 +80,7 @@ The goal: **Enable customers to easily browse items, manage a cart, check out, a
 
 ---
 
-## **5. Technology Summary (High-Level)**
+## **4. Technology Summary (High-Level)**
 
 Although non-technical, executives may want assurance of modern foundations:
 
@@ -116,32 +101,7 @@ All services utilize Acme’s existing cloud infrastructure and identity standar
 
 ---
 
-## **6. What This Enables for Acme**
-
-- A strong foundation for **future ecommerce capabilities**:
-    
-    - Payment integration
-        
-    - Discounts & promotions
-        
-    - Inventory visibility
-        
-    - Loyalty or rewards program
-        
-    - Personalization using customer data
-        
-- A reusable platform that can support:
-    
-    - Multiple product lines
-        
-    - Branded microsites
-        
-    - Mobile app integration
-        
-
----
-
-## **7. Project Scope Summary**
+## **5. Project Scope Summary**
 
 This release includes:
 
@@ -157,26 +117,3 @@ This release includes:
 |Profile management|✅|
 |Payment processing|❌ Future phase|
 |Admin features|❌ Out of scope|
-
----
-
-## **8. Timeline & Delivery Model (High-Level)**
-
-This project will be implemented using modern **agentic IDE** workflows, enabling:
-
-- Rapid generation of high-quality code
-    
-- Automated synchronization between requirements, architecture, and implementation
-    
-- Faster iteration cycles with fewer manual steps
-    
-- Continuous refinement through automated validation
-    
-
----
-
-## **9. Executive Summary**
-
-Acme’s new Shopping Cart website delivers a modern, secure, and scalable digital storefront designed to support both immediate ecommerce needs and long-term growth. By unifying identity, catalog services, and order management into one seamless user experience, Acme strengthens customer relationships, increases purchase opportunities, and creates a strong foundation for future enhancements.
-
-This initiative positions Acme to compete effectively in the premium consumer market with a high-end, frictionless online buying experience.
