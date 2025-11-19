@@ -1,5 +1,4 @@
-# Document 2 — Technical & Architectural Specification
-_Acme Shopping Cart_
+# Technical & Architectural Specification
 
 ## Table of Contents
 1. Architecture Overview
@@ -20,27 +19,36 @@ _Acme Shopping Cart_
 
 ## 1. Architecture Overview
 
-### 1.1 Application Type
+### 1.1 Technology Stack
 
-- Single Page Application (SPA)
-- Built with **React** and **TypeScript**
-- Styled with **TailwindCSS**
-- Uses **client‑side routing** (e.g., React Router)
+- **Frontend Framework:** React with TypeScript
+- **Styling:** TailwindCSS
+- **Routing:** Client-side routing (React Router)
+- **Authentication:** OpenID Connect (OIDC)
 
-### 1.2 External Dependencies
+### 1.2 External Service Dependencies
 
-- **IdentityServer** for OpenID Connect–based authentication.
-- **Catalog API** for item browsing and details.
-- **ShoppingCart API** for customers and orders.
+The application integrates with three external services:
+
+- **IdentityServer** - OpenID Connect authentication provider
+- **Catalog API** - Product catalog and search
+- **ShoppingCart API** - Customer and order management
+
+For high-level feature descriptions, see [Overview.md](./Overview.md).
 
 ### 1.3 Key Architectural Decisions
 
-- The cart is **client‑side only** until checkout; there is no dedicated “cart” resource in the backend.
-- Authentication is required only for:
-  - Checkout
-  - Order History
-  - Profile pages
-- Admin/CSR endpoints (e.g., publish customer/order, global customer search) are not used in this SPA.
+**Decision: Client-Side Cart Storage**
+- **Rationale:** The shopping cart exists only in browser memory/localStorage until checkout. There is no dedicated "cart" resource in the backend APIs.
+- **Impact:** Cart data is lost on browser close unless persisted to localStorage. Cart is submitted as part of order creation during checkout.
+
+**Decision: Authentication Gating**
+- **Rationale:** To minimize friction, authentication is deferred until necessary.
+- **Protected Routes:** Checkout, Order History, Profile pages require authentication.
+- **Public Routes:** Catalog browsing, product detail, and cart management are accessible without login.
+
+**Decision: No Admin/CSR Features**
+- **Rationale:** This SPA is customer-facing only. Admin endpoints (publish customer/order, global search) exist in ShoppingCart API but are not exposed in this UI.
 
 ---
 
@@ -510,6 +518,42 @@ flowchart TD
   SPA -->|GET items| CatalogAPI[Catalog API]
   SPA -->|Customer, Orders| ShoppingCartAPI[ShoppingCart API]
   SPA -->|OIDC| IdentityServer[IdentityServer]
+```
+
+```mermaid
+flowchart LR
+    A[Customer Browser] --> B[Acme Shopping Cart SPA<br/>React + TypeScript + Tailwind]
+
+    subgraph C[Public Experience]
+        B --> C1[Catalog Page<br/>Paginated List]
+        B --> C2[Product Detail Page]
+        B --> C3[Shopping Cart]
+    end
+
+    subgraph D[Login & Identity]
+        B --> D1[Login Redirect<br/>IdentityServer<br/>OpenID Connect]
+        D1 --> B
+    end
+
+    subgraph E[Authenticated Experience]
+        B --> E1[Checkout Page]
+        B --> E2[Profile Page]
+        B --> E3[Order History Page]
+        B --> E4[Order Detail Page]
+    end
+
+    subgraph F[APIs]
+        F1[Catalog API<br/>Item List + Detail]
+        F2[ShoppingCart API<br/>Customer + Orders]
+    end
+    
+    C1 --> F1
+    C2 --> F1
+    
+    E1 --> F2
+    E2 --> F2
+    E3 --> F2
+    E4 --> F2
 ```
 
 ---

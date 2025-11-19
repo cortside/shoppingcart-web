@@ -112,11 +112,15 @@ Each requirement includes an ID for traceability.
   The system SHALL require users to be authenticated before they can access Checkout, Order History, or Profile pages.
 - **FR‑013 (Redirect on Protected Access):**  
   When a non‑authenticated user attempts to access a protected page, the system SHALL redirect them to the login flow and, after successful login, back to the originating page.
+- **FR‑013A (Original URL Preservation):**  
+  The system SHALL preserve the original requested URL during login redirect and return the user to that specific page after successful authentication.
 
 ### 3.5 Checkout
 
 - **FR‑014 (Customer Info at Checkout):**  
   The system SHALL collect or display customer information (name, email, birthdate) during checkout.
+- **FR‑014A (Customer Info Prefill):**  
+  If the user has an existing customer record, the system SHALL prefill customer information at checkout.
 - **FR‑015 (Shipping Address):**  
   The system SHALL capture a single shipping address (street, city, state, country, zip code).
 - **FR‑016 (Order Review):**  
@@ -165,7 +169,10 @@ Each requirement includes an ID for traceability.
 - **UX‑003 (Feedback):**  
   - Adding an item to the cart SHOULD provide immediate visual confirmation (toast or inline message).  
   - Form validation errors SHOULD be shown near the relevant fields.
-- **UX‑004 (Consistency):**  
+- **UX‑004 (Loading & Error States):**  
+  - The system SHOULD display loading indicators during API calls (catalog, orders, profile).  
+  - The system SHOULD display user‑friendly error messages when API calls fail.
+- **UX‑005 (Consistency):**  
   Buttons, typography, and spacing SHOULD follow a consistent design style across pages.
 
 ---

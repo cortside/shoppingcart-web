@@ -117,3 +117,4 @@ This release includes:
 |Profile management|✅|
 |Payment processing|❌ Future phase|
 |Admin features|❌ Out of scope|
+|Mobile app (capacitor)|❌ Future phase|
