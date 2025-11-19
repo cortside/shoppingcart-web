@@ -1,113 +1,160 @@
 # ShoppingCart Web - Copilot Agent Instructions
 
-> **Additional Resources**: See `.github/instructions/` for detailed coding standards (TypeScript, performance, security, workflow). This file provides quick-start essentials only.
+> **Additional Resources**: See `.github/instructions/` for detailed coding standards (TypeScript, performance, security, workflow). See `docs/` for comprehensive project documentation (Overview, Requirements, Technical Specification).
 
 ## Repository Overview
 
-**Purpose**: Angular 18 SPA for e-commerce shopping cart with authentication, item browsing, cart management, and checkout.
+**Purpose**: React SPA for e-commerce shopping cart with authentication, item browsing, cart management, and checkout.
 
-**Tech Stack**: Angular 18.2.x (TypeScript 5.4.5) • Angular Material • Tailwind CSS 3.1 • OIDC Auth • Jasmine/Karma • Cypress 12 • ESLint • Prettier
+**Tech Stack**: React • TypeScript • TailwindCSS • React Router • OIDC Auth
 
-**Key Directories**: `src/app/` (modules), `projects/core/` (shared auth library), `src/environments/` (config), `cypress/` (e2e tests)
+**Status**: ⚠️ **In Development - React Rewrite** (replacing legacy Angular implementation)
+
+**Key Documentation**:
+- `docs/Overview.md` - Executive summary of features and scope
+- `docs/Functional & Behavioral Requirements.md` - User stories, functional requirements, acceptance criteria
+- `docs/Technical & Architectural Specification.md` - Implementation guide with data models, API contracts, architecture decisions
 
 ## Critical Prerequisites
 
-### ALWAYS Required Before Build/Test
-1. **config.local.json MUST exist**: `src/config.local.json` with minimum `{}` content
-   ```powershell
-   if(!(Test-Path ".\src\config.local.json")) { New-Item -path ".\src" -name "config.local.json" -type "file" -value "{}" }
-   ```
+### ALWAYS Required
+1. **Git Operations**: AI agents MUST NOT run git commands that modify state (add, commit, push, merge, mv, etc.). Only read-only commands allowed (status, diff, log). See `.github/instructions/workflow.instructions.md`.
 
-2. **Core library built first**: Commands like `npm run build` and `npm start` automatically build `projects/core/` before the main app. If using `ng` directly, run `ng build core` first.
+2. **Backend Services**: The React app requires three backend services to be running:
+   - Catalog API (port 5001)
+   - ShoppingCart API (port 5000)
+   - Identity Server (port 5002)
 
-3. **Git Operations**: AI agents MUST NOT run git commands that modify state (add, commit, push, merge, mv, etc.). Only read-only commands allowed (status, diff, log). See `.github/instructions/workflow.instructions.md`.
+## Project Structure (Planned React Implementation)
 
-## Essential Commands
+Based on Technical Specification (Section 2.1):
 
-### Install & Build
-```powershell
-npm ci                 # Clean install (~60s) - use after clone or dependency changes
-npm run build          # Build core + main app (~25s) - ng build core && ng build shoppingcart-web
-npm start              # Dev server at localhost:4200 - ng build core && ng serve
+```
+src/
+  api/              # HTTP clients for backend services
+  auth/             # OIDC auth provider
+  components/       # Reusable components
+  contexts/         # React contexts (Auth, Cart)
+  pages/            # Route-level page components
+  routes/           # Route configuration
+  types/            # TypeScript type definitions
+  utils/            # Utility functions
 ```
 
-**Expected Build Warnings** (safe to ignore):
-- Bundle budget exceeded (933KB > 512KB) - optimization opportunity, not a failure
-- CommonJS dependencies (lodash, yup, property-expr) - already allowed in angular.json
-- Tailwind darkMode deprecation - non-breaking
+## Key Architectural Patterns
 
-### Testing
-```powershell
-npm run test:ci        # Unit tests CI mode (~3s, 21/22 pass, 1 skipped)
-npm test               # Unit tests watch mode (Karma + Chrome)
-npm run cypress:open   # E2E interactive (requires dev server running)
-```
+From Technical Specification:
 
-**Expected Test Warnings** (safe to ignore):
-- NG0304 'app-header' error - component declaration in test, tests still pass
-- 404 for test image files - expected, tests pass
+- **Client-Side Cart Storage**: Cart exists in browser memory/localStorage until checkout
+- **Authentication Gating**: Login required only for Checkout, Orders, Profile
+- **Protected Routes**: `RequireAuth` wrapper checks authentication
+- **State Management**: React Contexts for Auth and Cart state
+- **HTTP Interceptor**: Automatic bearer token injection for authenticated requests
 
-### Code Quality
-```powershell
-npm run lint           # ESLint check (~2s) - strict TypeScript rules
-npm run lint:fix       # Auto-fix linting issues
-npm run prettier:fix   # Format all files (65 files currently need formatting)
-.\clean.ps1            # Remove node_modules, dist, coverage (use when corrupted)
-```
+## Backend API Integration
 
-**Linting**: Enforces `@typescript-eslint/no-explicit-any: error`, component prefix `app`, SonarJS rules. Config: `.eslintrc.json`  
-**Formatting**: Single quotes, 4-space tabs, 375-char width. Config: `.prettierrc`
+### Service Endpoints (Section 12.1)
+- **Catalog API**: `http://localhost:5001` (public, no auth)
+- **ShoppingCart API**: `http://localhost:5000` (requires auth)
+- **Identity Server**: `http://localhost:5002` (OIDC provider)
 
-## Key Configuration Files
+### Key API Contracts (Section 5)
+- `GET /items` - List catalog with pagination, search, sort
+- `GET /items/{sku}` - Item details
+- `POST /v1/customers` - Create customer
+- `POST /v1/orders` - Create order (new customer)
+- `POST /v1/customers/{id}/orders` - Create order (existing customer)
+- `GET /v1/orders` - List orders for customer
 
-**Application**: `src/config.json` (base), `src/config.local.json` (overrides, REQUIRED), `src/environments/environment*.ts`  
-**Build**: `angular.json` (2 projects: app + core lib), `tsconfig.json` (ES2022, strict mode), `karma.conf.js`, `cypress.config.ts`  
-**Quality**: `.eslintrc.json`, `.prettierrc`, `.editorconfig`  
-**Path Alias**: `@muziehdesign/core` → `dist/core` (in tsconfig.json)
+Full API documentation in Technical Specification Section 5.
 
-## Project Architecture
+## Authentication & Authorization (Section 6)
 
-**Modules**: `api/` (clients), `cart/` (facade), `checkout/` (lazy), `core/` (services), `item/` (lazy), `layout/` (shell), `order/` (lazy), `profile/`  
-**Core Library** (`projects/core/`): Shared auth/authz - `identityserver/` (OIDC), `authorization/` (policies), `logger/`  
-**Patterns**: Facades (business logic), Observable Store (state), Route Guards (`requireAuthentication`), HTTP Interceptors (tokens), Lazy Loading  
-**Auth Flow**: `main.ts` initializes → `app-initializer.ts` sets up authz → guards protect routes → interceptor adds tokens
+- **Flow**: OIDC Implicit Flow with IdentityServer
+- **Routes**: `/login`, `/auth/callback`, `/logout`
+- **Protected Pages**: Checkout, Order History, Profile
+- **Token Storage**: In-memory preferred (security best practice)
+- **Silent Renewal**: Implement token refresh for seamless sessions
+- **Browser Note**: Private/incognito mode requires third-party cookies enabled
 
-## Common Issues & Fixes
+## State Management (Section 7)
 
-| Issue | Fix |
-|-------|-----|
-| "Cannot find module '@muziehdesign/core'" | Run `ng build core` first or use `npm run build`/`npm start` |
-| Build fails (config.local.json) | Create `src/config.local.json` with `{}` |
-| Auth errors in private browsing | Allow third-party cookies in browser |
-| Bundle budget warning (933KB > 512KB) | Expected, not a failure - optimization opportunity |
-| CommonJS warnings (lodash, yup) | Expected, already allowed in angular.json |
-| NG0304 'app-header' test error | Tests pass, safe to ignore |
+### AuthContext
+- `isAuthenticated`, `accessToken`, `idToken`, `user`, `customerResourceId`
+- Methods: `login()`, `logout()`, `setCustomerResourceId()`
 
-## Pre-Commit Validation
+### CartContext
+- `items[]`, `itemCount`, `subtotal`
+- Methods: `addItem()`, `updateQuantity()`, `removeItem()`, `clearCart()`
+- **Persistence**: Use localStorage with 7-day expiration
 
-```powershell
-# Ensure prerequisites
-if(!(Test-Path ".\src\config.local.json")) { New-Item -path ".\src" -name "config.local.json" -type "file" -value "{}" }
-npm ci  # If package.json changed
+## Routing (Section 3)
 
-# Validate changes
-npm run lint && npm run prettier:fix && npm run build && npm run test:ci
-```
+| Route | Auth Required | Description |
+|-------|---------------|-------------|
+| `/` | No | Redirect to `/catalog` |
+| `/catalog` | No | Browse products |
+| `/product/:sku` | No | Product detail |
+| `/cart` | No | View/edit cart |
+| `/checkout` | Yes | Complete order |
+| `/account/orders` | Yes | Order history |
+| `/account/orders/:orderId` | Yes | Order detail |
+| `/account/profile` | Yes | User profile |
 
-**Expected**: Lint passes, prettier fixes 65 files, build completes with warnings, tests 21/22 pass (1 skipped)
+## Key Features & Requirements
 
-## Quick Reference
+See Functional & Behavioral Requirements (Section 3) for complete list:
 
-**VS Code Extensions**: Angular Language Service, Prettier, Tailwind CSS IntelliSense  
-**File Nesting** (`.vscode/settings.json`): `*.component.ts` nests `.html`, `.scss`, `.spec.ts`  
-**Git Ignored**: `*.local.json`, `src/build.json`, `node_modules/`, `dist/`, `.angular/cache`, `coverage/`  
-**Docker**: `.\build-dockerimages.ps1 -local true` (uses `deploy/docker/Dockerfile.alpine`, `repository.json`)
+- **FR-001 to FR-004**: Catalog browsing with pagination, search, sort
+- **FR-005 to FR-006**: Product detail and add to cart
+- **FR-007 to FR-011**: Cart management with subtotal
+- **FR-012 to FR-013**: Authentication with redirect-back
+- **FR-014 to FR-018**: Checkout with customer prefill and order creation
+- **FR-019 to FR-022**: Order history and profile management
+
+## Common Issues & Troubleshooting (Section 14)
+
+**Authentication Issues**:
+- Private browsing fails → Allow third-party cookies
+- Token expired errors → Verify silent renewal implementation
+
+**API Connection Issues**:
+- Cannot connect → Verify all services running on correct ports
+- CORS errors → Check backend CORS configuration
+
+**Configuration Issues**:
+- App fails to load → Verify config files exist with valid JSON
+
+## Code Quality Standards
+
+**TypeScript**: See `.github/instructions/typescript.instructions.md`
+- Strict mode enabled
+- No `any` types (use proper typing)
+- Prefer functional components with hooks
+
+**Security**: See `.github/instructions/security.instructions.md`
+- Never commit secrets
+- Validate all user input
+- Use parameterized queries
+- Token storage best practices
+
+**Performance**: See `.github/instructions/performance.instructions.md`
+- Lazy load routes
+- Memoize expensive computations
+- Virtualize long lists
+- Optimize bundle size
+
+**Workflow**: See `.github/instructions/workflow.instructions.md`
+- Branch naming conventions
+- Commit message standards
+- PR guidelines
+- Code review practices
 
 ## Working with This Repo
 
-✅ **Trust these instructions** - all commands validated  
-✅ **Follow build order** - core library before main app  
-✅ **Expect documented warnings** - they're safe to ignore  
-✅ **Check `.github/instructions/`** for detailed standards (TypeScript, workflow, security, performance)  
-✅ **Refer to `package.json`** for all available commands  
-❌ **Don't run git commands** that modify state (see workflow.instructions.md)
+✅ **Reference `docs/` for architecture** - Technical Specification has all implementation details  
+✅ **Follow TypeScript standards** - See `.github/instructions/typescript.instructions.md`  
+✅ **Check Functional Requirements** - User stories and acceptance criteria in `docs/`  
+✅ **Review API contracts** - Full specifications in Technical Specification Section 5  
+❌ **Don't run git commands** that modify state (see workflow.instructions.md)  
+❌ **Don't duplicate documentation** - Reference existing docs instead of repeating
