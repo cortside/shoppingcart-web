@@ -4,7 +4,8 @@ This directory contains detailed documentation for the ShoppingCart Web applicat
 
 ## Available Documentation
 
-- [PROJECT_OVERVIEW.md](PROJECT_OVERVIEW.md) - Complete application overview, architecture, and features
+- [Overview.md](Overview.md) - Complete application overview, architecture, and features
+- [Functional & Behavioral Requirements.md](./Functional%20&%20Behavioral%20Requirements.md) - detailed technical specifications, including personas, user stories, functional requirements, and acceptance criteria
 
 ## Quick Links
 

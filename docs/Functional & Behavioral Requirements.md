@@ -1,55 +1,22 @@
-# Document 1 — Functional & Behavioral Requirements
+# Functional & Behavioral Requirements
 _Acme Shopping Cart_
 
+> **Note:** For a high-level executive summary of this project, including purpose, core features, and scope, see [Overview.md](./Overview.md).
+
 ## Table of Contents
-1. Overview and Scope
-2. Personas
-3. User Stories
-4. Functional Requirements (FR)
-5. Non‑Functional Requirements (NFR)
-6. UX & Interaction Requirements
-7. Acceptance Criteria (Key Flows)
-8. Glossary
+1. Personas
+2. User Stories
+3. Functional Requirements (FR)
+4. Non‑Functional Requirements (NFR)
+5. UX & Interaction Requirements
+6. Acceptance Criteria (Key Flows)
+7. Glossary
 
 ---
 
-## 1. Overview and Scope
+## 1. Personas
 
-### 1.1 Purpose
-
-The Acme Shopping Cart website is a customer‑facing e‑commerce front end. It allows users to:
-
-- Browse a catalog of items
-- View product details
-- Add items to a shopping cart
-- Log in and complete a checkout flow (without payment processing)
-- View past orders
-- Manage their profile information
-
-### 1.2 In‑Scope
-
-- Public catalog browsing (no login required)
-- Product detail view
-- Shopping cart management (local to the browser until checkout)
-- Authentication for checkout and account pages
-- Checkout flow (customer info + shipping address + order review + order placement)
-- Order history for the logged‑in customer
-- Profile view and update for the logged‑in customer
-
-### 1.3 Out‑of‑Scope (for this version)
-
-- Payment processing (no card entry, no external payment gateway)
-- Admin / CSR features (searching all orders, publishing customers, publishing orders)
-- Inventory management
-- Promotions, coupons, discounts
-- Multi‑address management
-- Multi‑currency or localization beyond basic English
-
----
-
-## 2. Personas
-
-### 2.1 Persona P1 — Casual Shopper
+### 1.1 Persona P1 — Casual Shopper
 
 - **Description:** New or occasional visitor who discovers the site and wants to browse premium items.
 - **Goals:**
@@ -61,7 +28,7 @@ The Acme Shopping Cart website is a customer‑facing e‑commerce front end. It
   - Slow catalog loading
   - Being forced to log in too early
 
-### 2.2 Persona P2 — Returning Customer
+### 1.2 Persona P2 — Returning Customer
 
 - **Description:** Previously created an account and placed at least one order.
 - **Goals:**
@@ -74,29 +41,29 @@ The Acme Shopping Cart website is a customer‑facing e‑commerce front end. It
 
 ---
 
-## 3. User Stories
+## 2. User Stories
 
-### 3.1 Catalog Browsing
+### 2.1 Catalog Browsing
 
 - **US‑001:** As a visitor, I want to browse a list of items so that I can see what is available.
 - **US‑002:** As a visitor, I want to search by name or SKU so that I can quickly find a specific item.
 - **US‑003:** As a visitor, I want to page through results so I can navigate large catalogs.
 - **US‑004:** As a visitor, I want to sort items (e.g., by name or price) so that I can order the catalog in a way that suits me.
 
-### 3.2 Product Detail & Cart
+### 2.2 Product Detail & Cart
 
 - **US‑005:** As a visitor, I want to view details of a specific item so that I can decide whether to purchase it.
 - **US‑006:** As a visitor, I want to add an item to my cart so that I can purchase it later.
 - **US‑007:** As a visitor, I want to change quantities or remove items from my cart so that I can control exactly what I’m buying.
 
-### 3.3 Authentication & Checkout
+### 2.3 Authentication & Checkout
 
 - **US‑008:** As a visitor, I want to log in when I’m ready to check out so that I can place an order.
 - **US‑009:** As a logged‑in user, I want to provide a shipping address so that my order can be delivered.
 - **US‑010:** As a logged‑in user, I want to review my order before placing it so that I can confirm everything is correct.
 - **US‑011:** As a logged‑in user, I want to receive a confirmation that my order was placed.
 
-### 3.4 Order History & Profile
+### 2.4 Order History & Profile
 
 - **US‑012:** As a logged‑in user, I want to see my past orders so that I can track or reference what I’ve purchased.
 - **US‑013:** As a logged‑in user, I want to view details of a past order so that I can see items, dates, and status.
@@ -104,11 +71,11 @@ The Acme Shopping Cart website is a customer‑facing e‑commerce front end. It
 
 ---
 
-## 4. Functional Requirements (FR)
+## 3. Functional Requirements (FR)
 
 Each requirement includes an ID for traceability.
 
-### 4.1 Catalog
+### 3.1 Catalog
 
 - **FR‑001 (Catalog List):**  
   The system SHALL display a paginated list of items on the Catalog page.
@@ -119,14 +86,14 @@ Each requirement includes an ID for traceability.
 - **FR‑004 (Catalog Accessibility):**  
   The catalog page SHALL be accessible without authentication.
 
-### 4.2 Product Detail
+### 3.2 Product Detail
 
 - **FR‑005 (Product Detail View):**  
   The system SHALL display an item’s name, SKU, image, and price on the Product Detail page.
 - **FR‑006 (Add to Cart from Detail):**  
   The system SHALL allow the user to add an item to the cart from the Product Detail page, specifying quantity.
 
-### 4.3 Cart
+### 3.3 Cart
 
 - **FR‑007 (View Cart):**  
   The system SHALL provide a Cart page where users can see all items currently in their cart.
@@ -139,14 +106,14 @@ Each requirement includes an ID for traceability.
 - **FR‑011 (Proceed to Checkout):**  
   The system SHALL provide a way to proceed from Cart to Checkout.
 
-### 4.4 Authentication
+### 3.4 Authentication
 
 - **FR‑012 (Login Trigger):**  
   The system SHALL require users to be authenticated before they can access Checkout, Order History, or Profile pages.
 - **FR‑013 (Redirect on Protected Access):**  
   When a non‑authenticated user attempts to access a protected page, the system SHALL redirect them to the login flow and, after successful login, back to the originating page.
 
-### 4.5 Checkout
+### 3.5 Checkout
 
 - **FR‑014 (Customer Info at Checkout):**  
   The system SHALL collect or display customer information (name, email, birthdate) during checkout.
@@ -159,7 +126,7 @@ Each requirement includes an ID for traceability.
 - **FR‑018 (Cart Clearing on Success):**  
   After a successful order, the system SHALL clear the local cart.
 
-### 4.6 Order History & Profile
+### 3.6 Order History & Profile
 
 - **FR‑019 (Order History List):**  
   The system SHALL display a list of past orders for the logged‑in user, with pagination.
@@ -172,7 +139,7 @@ Each requirement includes an ID for traceability.
 
 ---
 
-## 5. Non‑Functional Requirements (NFR)
+## 4. Non‑Functional Requirements (NFR)
 
 - **NFR‑001 (Performance):**  
   Catalog pages SHOULD load in under 2 seconds on a typical broadband connection, excluding third‑party network latency.
@@ -187,7 +154,7 @@ Each requirement includes an ID for traceability.
 
 ---
 
-## 6. UX & Interaction Requirements
+## 5. UX & Interaction Requirements
 
 - **UX‑001 (Navigation):**  
   Global navigation SHOULD provide links to Catalog, Cart, and Account (Profile / Orders) when applicable.
@@ -203,28 +170,28 @@ Each requirement includes an ID for traceability.
 
 ---
 
-## 7. Acceptance Criteria (Key Flows)
+## 6. Acceptance Criteria (Key Flows)
 
-### 7.1 Catalog Browsing (FR‑001 to FR‑004)
+### 6.1 Catalog Browsing (FR‑001 to FR‑004)
 
 - Given I am a visitor, when I navigate to the Catalog page, then I see a list of items.
 - Given there are more items than fit on one page, when I click to the next page, then I see a different subset of items.
 - Given I enter a search term, when I submit the search, then items are filtered by name or SKU matching that term.
 - Given I choose a sort option, when the page reloads, then items are shown in the specified order.
 
-### 7.2 Cart Management (FR‑007 to FR‑011)
+### 6.2 Cart Management (FR‑007 to FR‑011)
 
 - Given I am viewing a product, when I add it to my cart, then I see the item with the correct quantity on the Cart page.
 - Given my cart has an item, when I change its quantity, then the subtotal updates accordingly.
 - Given my cart has an item, when I remove it, then the item disappears from the cart and the subtotal updates.
 
-### 7.3 Checkout (FR‑012 to FR‑018)
+### 6.3 Checkout (FR‑012 to FR‑018)
 
 - Given I am not logged in, when I click “Proceed to Checkout,” then I am redirected to login and then brought back to checkout.
 - Given I am logged in and have items in my cart, when I complete the checkout forms and submit, then an order is created and I see a confirmation page.
 - Given my order is successfully placed, when I go back to my cart, then the cart is empty.
 
-### 7.4 Order History & Profile (FR‑019 to FR‑022)
+### 6.4 Order History & Profile (FR‑019 to FR‑022)
 
 - Given I am logged in and have placed orders, when I visit the Order History page, then I see a list of my own orders.
 - Given I am logged in and select an order, when I view its detail page, then I see items, totals, status, and shipping address.
@@ -232,7 +199,7 @@ Each requirement includes an ID for traceability.
 
 ---
 
-## 8. Glossary
+## 7. Glossary
 
 - **Catalog:** The list of products available for purchase.
 - **Item/Product:** A purchasable unit in the catalog, identified by SKU and itemId.
