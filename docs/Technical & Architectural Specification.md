@@ -14,6 +14,7 @@
 11. Diagrams
 12. Environment & Configuration
 13. Future Extensions
+14. Common Issues and Troubleshooting
 
 ---
 
@@ -25,6 +26,10 @@
 - **Styling:** TailwindCSS
 - **Routing:** Client-side routing (React Router)
 - **Authentication:** OpenID Connect (OIDC)
+- **Testing:**
+  - Unit Testing: Jest or Vitest
+  - E2E Testing: Cypress or Playwright
+  - Code Quality: ESLint, Prettier
 
 ### 1.2 External Service Dependencies
 
@@ -409,6 +414,24 @@ All calls require `Authorization: Bearer {accessToken}`.
 
 - Environment must provide a mapping between the OIDC subject (`sub`) and a `customerResourceId`, or the SPA must create a customer on first checkout and remember the resulting `customerResourceId` in `AuthState`.
 
+### 6.4 Silent Token Renewal
+
+The application SHOULD implement silent token renewal to maintain user sessions without interruption:
+- Monitor token expiration
+- Refresh tokens before expiration
+- Maintain seamless user experience during long sessions
+
+### 6.5 Browser Considerations
+
+**Private/Incognito Mode**: When testing in private browsing mode, users must allow third-party cookies to avoid authentication errors with IdentityServer OIDC flow.
+
+### 6.6 HTTP Token Injection
+
+Implement an HTTP interceptor/middleware that:
+- Automatically adds `Authorization: Bearer {accessToken}` header to authenticated requests
+- Uses a request context flag (e.g., `requiresAuth` or similar) to identify which requests need tokens
+- Handles token refresh before attaching to requests if token is expired
+
 ---
 
 ## 7. State Management
@@ -432,6 +455,14 @@ All calls require `Authorization: Bearer {accessToken}`.
 - Derived values:
   - `itemCount`
   - `subtotal`
+
+### 7.3 State Persistence
+
+**Cart State Persistence**:
+- Cart state SHOULD be persisted to localStorage
+- On application load, restore cart from localStorage if available
+- Clear localStorage cart after successful order placement
+- Consider cart expiration (e.g., 7 days) to avoid stale data
 
 ---
 
@@ -520,6 +551,8 @@ flowchart TD
   SPA -->|OIDC| IdentityServer[IdentityServer]
 ```
 
+### 11.4 High‑Level Architecture (infographic)
+
 ```mermaid
 flowchart LR
     A[Customer Browser] --> B[Acme Shopping Cart SPA<br/>React + TypeScript + Tailwind]
@@ -560,6 +593,35 @@ flowchart LR
 
 ## 12. Environment & Configuration
 
+### 12.1 Default Service Ports
+
+- **Catalog API**: http://localhost:5001
+- **ShoppingCart API**: http://localhost:5000
+- **Identity Server**: http://localhost:5002
+- **Dev Server**: http://localhost:3000 (typical React default)
+
+### 12.2 Configuration File Strategy
+
+**Development Setup**:
+- `config.json` - Base configuration (committed to version control)
+- `config.local.json` - Local overrides (git-ignored, optional but recommended)
+
+Example `config.json`:
+
+```json
+{
+  "catalogApi": { "url": "http://localhost:5001" },
+  "shoppingCartApi": { "url": "http://localhost:5000" },
+  "identity": {
+    "authority": "http://localhost:5002",
+    "clientId": "shoppingcart-web",
+    "scope": "openid profile shoppingcart-api catalog-api"
+  }
+}
+```
+
+### 12.3 Environment Variables
+
 Environment variables (or equivalent):
 
 - `API_CATALOG_BASE_URL`
@@ -578,4 +640,34 @@ Environment variables (or equivalent):
 - Integrate payment gateway and update order status to `paid`.
 - Add richer filtering and faceting to catalog.
 - Add role‑based UI based on `/v1/authorization` permissions.
+
+---
+
+## 14. Common Issues and Troubleshooting
+
+### 14.1 Authentication Issues
+
+**Symptom**: Authentication fails in private/incognito browsing mode  
+**Solution**: Allow third-party cookies in browser settings for IdentityServer domain
+
+**Symptom**: Token expired errors during active session  
+**Solution**: Verify silent token renewal is implemented and functioning correctly
+
+### 14.2 API Connection Issues
+
+**Symptom**: Cannot connect to backend APIs  
+**Solution**:
+- Verify all services are running on correct ports (Catalog:5001, ShoppingCart:5000, Identity:5002)
+- Check CORS configuration on backend services
+- Verify API base URLs in configuration files
+
+### 14.3 Configuration Issues
+
+**Symptom**: Application fails to load or shows configuration errors  
+**Solution**: Ensure configuration files exist and contain valid JSON with required properties
+
+### 14.4 Development Server Issues
+
+**Symptom**: Dev server port already in use  
+**Solution**: Stop other dev servers or configure alternative port in build configuration
 
