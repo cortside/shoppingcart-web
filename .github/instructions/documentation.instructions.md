@@ -15,7 +15,7 @@ This document defines **HOW** documentation should be organized in any repositor
 
 1. **Separation of Concerns:** Separate stable documentation (`docs/`) from active work (`memory-bank/`)
 2. **Single Source of Truth:** Each piece of information lives in one place
-3. **Clear Lifecycle:** Documentation moves through planning → current → archive → completed
+3. **Clear Lifecycle:** Documentation moves through planning → current → completed
 4. **Minimal Root:** Root directory only contains essential public-facing information
 
 ## Directory Structure
@@ -153,8 +153,8 @@ repository-root/
 **Lifecycle:**
 
 1. Phase/feature is completed
-2. Implementation details documented
-3. Moved from `memory-bank/archive/` to `docs/completed/`
+2. Implementation files moved from `memory-bank/current/` to `docs/completed/`
+3. Files keep the same name (no renaming)
 4. Referenced in future work
 
 **Must Include:**
@@ -194,7 +194,7 @@ repository-root/
 
 1. Created when phase/feature work starts
 2. Updated daily/weekly during development
-3. When phase completes → move to `memory-bank/archive/`
+3. When phase completes → move files to `docs/completed/` (same as planning → current)
 
 **Update Frequency:** Daily to weekly
 
@@ -212,29 +212,10 @@ repository-root/
 
 1. Created during planning (before work starts)
 2. Referenced during implementation
-3. When work starts → key info moves to `current/`
-4. When complete → summary to `docs/completed/`, plan archived
+3. When work starts → move plan from `planning/` to `current/`
+4. When complete → move plan from `current/` to `docs/completed/`
 
 **Update Frequency:** During planning, rarely during implementation
-
-#### `memory-bank/archive/`
-
-**Content:** Completed work from `current/`
-
-**Examples:**
-
-- `phase7-implementation-notes.md` - How phase 7 was built
-- `debugging-websockets.md` - Issues and solutions
-- `spike-results-multi-model.md` - Spike outcomes
-
-**Lifecycle:**
-
-1. Work completes
-2. Files moved from `current/` to `archive/`
-3. Key information extracted to `docs/completed/`
-4. Archive kept for historical reference
-
-**Retention:** Kept indefinitely for reference
 
 ## File Naming Conventions
 
@@ -382,7 +363,7 @@ Create: Additional notes files as needed (memory-bank/current/phaseX-notes.md)
 - ✅ Clear separation: `planning/` = future work, `current/` = active work
 - ✅ Easy to see what's happening NOW (look in `current/` directory)
 - ✅ Prevents confusion about which plan is active
-- ✅ Plan evolution tracked in version control (move = git mv)
+- ✅ Plan evolution tracked in version control
 
 **During Implementation:**
 
@@ -397,9 +378,8 @@ Add: Decisions, blockers, solutions, lessons learned
 **3. Completion Phase:**
 
 ```
-Create: docs/completed/PHASEX_COMPLETION.md
-Include: What was built, decisions, lessons learned
-Move: memory-bank/current/*.md → memory-bank/archive/
+Move: memory-bank/current/PHASEX_IMPLEMENTATION.md → docs/completed/PHASEX_IMPLEMENTATION.md
+Keep: Same filename (no renaming)
 Update: docs/README.md with links to new docs
 Update: Root README.md with new features (brief)
 ```
@@ -423,10 +403,10 @@ Update: Root README.md with new features (brief)
 When reorganizing:
 
 1. Identify correct location using rules above
-2. Move file using `git mv` (preserves history)
+2. Move file using terminal commands (`Move-Item` in PowerShell, `mv` in bash/zsh)
 3. Update all references to the file
 4. Update README.md files in affected directories
-5. Commit with message: `docs: move X to Y (reason)`
+5. User handles git operations (stage, commit) per workflow standards
 
 ## Special Cases
 
@@ -486,7 +466,7 @@ Before committing documentation:
 
 ### Regular Reviews
 
-- **Weekly:** Review `memory-bank/current/` - update or archive
+- **Weekly:** Review `memory-bank/current/` - update or move completed files to `docs/completed/`
 - **Monthly:** Review `docs/` - check for outdated information
 - **Quarterly:** Full documentation structure review
 
@@ -508,7 +488,7 @@ Before committing documentation:
 | Detailed phase plan     | `memory-bank/planning/PHASEX_PLAN.md`   |
 | Daily progress notes    | `memory-bank/current/phaseX-notes.md`   |
 | Completed phase summary | `docs/completed/PHASEX_COMPLETION.md`   |
-| Research spike results  | `memory-bank/archive/spike-*.md`        |
+| Research spike results  | `docs/completed/spike-*.md`             |
 | Architectural decisions | `docs/architecture/decisions/`          |
 | User requirements       | `docs/requirements/`                    |
 | Lessons learned         | `docs/completed/`                       |
@@ -521,7 +501,7 @@ Before committing documentation:
 | -------------------- | -------------------------------------------------- |
 | Starting new phase   | Create plan in `memory-bank/planning/`             |
 | Daily progress       | Update `memory-bank/current/` notes                |
-| Phase completes      | Create `docs/completed/`, archive current notes    |
+| Phase completes      | Move files from `current/` to `docs/completed/`    |
 | Architecture changes | Update `docs/architecture/`                        |
 | New feature added    | Update root `README.md` features (brief)           |
 | Requirements change  | Update `docs/requirements/`                        |
@@ -534,7 +514,7 @@ Before committing documentation:
 | -------------- | ----------------------------------- | ------------------------------------------- |
 | **Draft**      | Work in progress, not reviewed      | Usually `memory-bank/`                      |
 | **Active**     | Current, accurate, in active use    | `docs/` or `memory-bank/current/`           |
-| **Completed**  | Finished work, historical reference | `docs/completed/` or `memory-bank/archive/` |
+| **Completed**  | Finished work, historical reference | `docs/completed/`                           |
 | **Deprecated** | Outdated, replaced by newer doc     | Any location, with link to replacement      |
 
 ---
@@ -589,14 +569,14 @@ These rules define **HOW** documentation should be organized, regardless of **WH
 2. Root README is minimal and public-facing
 3. Every doc has header with date, status, owner
 4. Use descriptive filenames
-5. Follow the lifecycle: planning → current → archive → completed
+5. Follow the lifecycle: planning → current → completed
 
 **When in doubt:**
 
 - Is it stable and long-term? → `docs/`
 - Is it active work-in-progress? → `memory-bank/current/`
 - Is it future planning? → `memory-bank/planning/`
-- Is it completed work? → `memory-bank/archive/` then eventually `docs/completed/`
+- Is it completed work? → `docs/completed/`
 
 ---
 
