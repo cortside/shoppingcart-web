@@ -46,6 +46,14 @@ export const mockCatalogItems: CatalogItem[] = [
   },
   {
     itemId: '6',
+    name: 'Elijah Craig 23 Year',
+    sku: 'elijah-23',
+    unitPrice: 249.99,
+    imageUrl: 'https://example.com/elijah23.jpg',
+    status: 'active',
+  },
+  {
+    itemId: '7',
     name: 'Weller 12 Year',
     sku: 'weller-12',
     unitPrice: 49.99,

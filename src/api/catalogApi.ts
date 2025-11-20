@@ -31,7 +31,7 @@ function getCatalogApiUrl(): string {
  */
 export async function listItems(params: ListItemsParams = {}): Promise<PagedResult<CatalogItem>> {
   const baseUrl = getCatalogApiUrl();
-  const url = `${baseUrl}/items`;
+  const url = `${baseUrl}/api/v1/items`;
 
   return get<PagedResult<CatalogItem>>(url, {
     params: {
@@ -49,7 +49,7 @@ export async function listItems(params: ListItemsParams = {}): Promise<PagedResu
  */
 export async function getItemBySku(sku: string): Promise<CatalogItem> {
   const baseUrl = getCatalogApiUrl();
-  const url = `${baseUrl}/items/${encodeURIComponent(sku)}`;
+  const url = `${baseUrl}/api/v1/items/${encodeURIComponent(sku)}`;
 
   return get<CatalogItem>(url);
 }
