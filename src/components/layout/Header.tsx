@@ -79,7 +79,7 @@ export function Header() {
                       d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                     />
                   </svg>
-                  <span>{user?.name || 'Account'}</span>
+                  <span>{user?.name || user?.email || 'Account'}</span>
                   <svg
                     className={`h-4 w-4 transition-transform ${showDropdown ? 'rotate-180' : ''}`}
                     fill="none"
@@ -92,11 +92,16 @@ export function Header() {
                 </button>
 
                 {showDropdown && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+                  <div
+                    className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10"
+                    role="menu"
+                    aria-label="Account menu"
+                  >
                     <Link
                       to="/account/orders"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => setShowDropdown(false)}
+                      role="menuitem"
                     >
                       My Orders
                     </Link>
@@ -104,6 +109,7 @@ export function Header() {
                       to="/account/profile"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => setShowDropdown(false)}
+                      role="menuitem"
                     >
                       Profile
                     </Link>
@@ -113,6 +119,7 @@ export function Header() {
                         logout();
                       }}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      role="menuitem"
                     >
                       Logout
                     </button>
