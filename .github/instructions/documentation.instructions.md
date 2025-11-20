@@ -280,7 +280,7 @@ Every documentation file **must** include:
 
 **Requirements:**
 
-1. **Every plan document** (e.g., `PHASE7.5_A2A_IMPLEMENTATION.md`) **MUST include a Todo List section**
+1. **Every plan document** (e.g., `PHASE7.5_PLAN.md`) **MUST include a Todo List section**
 2. **Update the document** whenever tasks are completed or status changes
 3. **Never rely solely on in-memory todo lists** managed by AI tools
 4. **Use clear status indicators**: `[ ]` not started, `[~]` in progress, `[x]` completed
@@ -411,7 +411,7 @@ Add: Decisions, blockers, solutions, lessons learned
 **3. Completion Phase:**
 
 ```
-Move: memory-bank/current/PHASEX_IMPLEMENTATION.md → docs/completed/PHASEX_IMPLEMENTATION.md
+Move: memory-bank/current/PHASEX_PLAN.md → docs/completed/PHASEX_PLAN.md
 Keep: Same filename (no renaming)
 Update: Change status to "Completed" in document header
 Do NOT: Update docs/README.md or create completion tracking lists
