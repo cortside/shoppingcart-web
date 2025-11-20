@@ -8,7 +8,7 @@ excludeAgent: "code-review"
 
 **Status:** Authoritative  
 **Scope:** Universal development workflow practices (portable to any project)  
-**Last Updated:** November 5, 2025
+**Last Updated:** November 19, 2025
 
 This document defines **HOW** to work with version control, branches, commits, and code reviews. These standards are portable across all projects and languages.
 
@@ -50,6 +50,78 @@ This document defines **HOW** to work with version control, branches, commits, a
 2. Run tests and verify changes work
 3. Report what was changed and status
 4. Let user handle all git operations at appropriate time
+
+## Phase Completion Workflow
+
+**⚠️ CRITICAL: Before declaring any phase complete, a comprehensive code review MUST be performed.**
+
+### Phase Completion Checklist
+
+When completing a development phase, follow this workflow:
+
+1. **Implementation Complete**
+   - All features implemented per phase plan
+   - All acceptance criteria met
+   - Code builds successfully
+   - No linting errors
+
+2. **Testing Complete**
+   - All tests written and passing (100% pass rate)
+   - Test coverage meets requirements
+   - Manual testing completed (if applicable)
+   - No regressions introduced
+
+3. **Code Review REQUIRED** ⚠️
+   - **AI agents MUST perform a comprehensive code review before phase completion**
+   - Review ALL code written in the phase against:
+     - TypeScript standards (`.github/instructions/typescript.instructions.md`)
+     - Security best practices (`.github/instructions/security.instructions.md`)
+     - Performance guidelines (`.github/instructions/performance.instructions.md`)
+     - Project-specific standards
+   - Identify issues, improvements, and enhancements
+   - Provide specific, actionable feedback
+   - User decides which issues to address before completion
+
+4. **Address Review Findings**
+   - Fix critical issues identified in code review
+   - Implement approved improvements
+   - Re-test after fixes
+   - Verify no new issues introduced
+
+5. **Documentation Updated**
+   - Phase plan status updated to "Completed"
+   - Todo list marked complete
+   - README updated if needed
+   - Move phase plan from `memory-bank/current/` to `docs/completed/`
+
+6. **User Approval**
+   - User reviews changes
+   - User performs git operations (add, commit, push)
+   - User declares phase complete
+
+### Code Review Scope
+
+The code review should assess:
+
+- **Type Safety:** No `any` types, proper interfaces, type guards where needed
+- **React Patterns:** Hooks usage, component composition, prop types
+- **Performance:** Memoization opportunities, unnecessary re-renders, expensive operations
+- **Security:** Input validation, XSS prevention, no hardcoded secrets
+- **Accessibility:** ARIA labels, semantic HTML, keyboard navigation
+- **Error Handling:** Proper error messages, try/catch blocks, fallbacks
+- **Code Quality:** Readability, maintainability, single responsibility
+- **Testing:** Coverage, edge cases, test quality
+- **Consistency:** Follows project conventions and patterns
+
+### Example Phase Completion Flow
+
+```
+Phase Implementation → All Tests Pass → AI Code Review → 
+Address Issues → Re-test → Update Documentation → 
+User Git Commit → Phase Complete
+```
+
+**Never skip the code review step.** It catches issues early, ensures quality, and provides learning opportunities.
 
 ## Branch Strategy
 
