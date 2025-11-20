@@ -1,31 +1,37 @@
-import { beforeAll, afterEach, afterAll, vi } from 'vitest';
+import { vi, beforeAll, afterEach, afterAll } from 'vitest';
+import { server } from './mocks/server';
 
-// Setup file for Vitest tests
-// Mock the config utility to avoid loading from network
+// Mock configuration to avoid network calls during tests
+// CRITICAL: vi.mock() must be at top-level, NOT inside beforeAll()
+vi.mock('@/utils/config', () => ({
+  loadConfig: vi.fn().mockResolvedValue(undefined),
+  getConfig: vi.fn().mockReturnValue({
+    catalogApi: {
+      url: 'https://mockserver.cortside.net/api/v1',
+    },
+    shoppingCartApi: {
+      url: 'http://localhost:5000',
+    },
+    identity: {
+      authority: 'http://localhost:5002',
+      clientId: 'test-client-id',
+      scope: 'openid profile email',
+    },
+  }),
+}));
+
+// Setup MSW (Mock Service Worker) for API mocking
 beforeAll(() => {
-  // Mock config module to return test configuration
-  vi.mock('@/utils/config', () => ({
-    loadConfig: vi.fn().mockResolvedValue(undefined),
-    getConfig: vi.fn().mockReturnValue({
-      catalogApi: {
-        url: 'https://mockserver.cortside.net/api/v1',
-      },
-      shoppingCartApi: {
-        url: 'http://localhost:5000',
-      },
-      identity: {
-        authority: 'http://localhost:5002',
-        clientId: 'test-client-id',
-        scope: 'openid profile email',
-      },
-    }),
-  }));
+  // Start intercepting requests
+  server.listen({ onUnhandledRequest: 'warn' });
 });
 
 afterEach(() => {
-  // Cleanup after each test
+  // Reset handlers after each test to ensure test isolation
+  server.resetHandlers();
 });
 
 afterAll(() => {
-  // Global cleanup
+  // Clean up and close the server
+  server.close();
 });
