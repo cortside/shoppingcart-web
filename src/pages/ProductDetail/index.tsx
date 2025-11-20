@@ -25,6 +25,7 @@ export default function ProductDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [showToast, setShowToast] = useState(false);
+  const [addingToCart, setAddingToCart] = useState(false);
 
   // Fetch item details
   useEffect(() => {
@@ -43,9 +44,15 @@ export default function ProductDetailPage() {
         setItem(result);
       } catch (err) {
         if (err instanceof Error) {
-          setError(err.message);
+          if (err.message.includes('404')) {
+            setError('Product not found');
+          } else if (err.message.includes('network') || err.message.includes('fetch')) {
+            setError('Network error. Please check your connection and try again.');
+          } else {
+            setError(err.message);
+          }
         } else {
-          setError('Failed to load product details');
+          setError('An unexpected error occurred while loading product details');
         }
       } finally {
         setLoading(false);
@@ -57,9 +64,14 @@ export default function ProductDetailPage() {
 
   const handleAddToCart = () => {
     if (item) {
-      addItem(item, quantity);
-      setShowToast(true);
-      setQuantity(1); // Reset quantity after adding
+      setAddingToCart(true);
+      try {
+        addItem(item, quantity);
+        setShowToast(true);
+        setQuantity(1); // Reset quantity after adding
+      } finally {
+        setAddingToCart(false);
+      }
     }
   };
 
@@ -135,7 +147,7 @@ export default function ProductDetailPage() {
             </div>
 
             <div className="flex gap-4">
-              <Button onClick={handleAddToCart} className="flex-1">
+              <Button onClick={handleAddToCart} loading={addingToCart} className="flex-1">
                 Add to Cart
               </Button>
             </div>

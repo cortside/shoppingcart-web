@@ -88,9 +88,14 @@ describe('QuantitySelector', () => {
     render(<QuantitySelector value={5} onChange={onChange} />);
 
     const input = screen.getByLabelText('Quantity');
-    await user.clear(input);
-    await user.type(input, 'abc');
 
+    // Clearing triggers onChange with min value (1)
+    await user.clear(input);
+    expect(onChange).toHaveBeenCalledWith(1);
+
+    // Typing invalid characters doesn't trigger onChange again
+    onChange.mockClear();
+    await user.type(input, 'abc');
     expect(onChange).not.toHaveBeenCalled();
   });
 

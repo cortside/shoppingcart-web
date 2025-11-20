@@ -4,7 +4,7 @@
  * Per FR-001 through FR-004
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { listItems } from '../../api/catalogApi';
 import type { CatalogItem, PagedResult } from '../../types/Catalog';
@@ -24,8 +24,8 @@ export default function CatalogPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Get query params from URL
-  const pageNumber = Number(searchParams.get('page')) || 1;
+  // Get query params from URL (validate page number)
+  const pageNumber = Math.max(1, Number(searchParams.get('page')) || 1);
   const search = searchParams.get('search') || '';
   const sort = searchParams.get('sort') || 'name';
 
@@ -44,7 +44,17 @@ export default function CatalogPage() {
         });
         setData(result);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load catalog items');
+        if (err instanceof Error) {
+          if (err.message.includes('404')) {
+            setError('No items found');
+          } else if (err.message.includes('network') || err.message.includes('fetch')) {
+            setError('Network error. Please check your connection and try again.');
+          } else {
+            setError(err.message);
+          }
+        } else {
+          setError('An unexpected error occurred while loading catalog items');
+        }
       } finally {
         setLoading(false);
       }
@@ -68,21 +78,21 @@ export default function CatalogPage() {
     setSearchParams(newParams);
   };
 
-  const handleSearchChange = (value: string) => {
+  const handleSearchChange = useCallback((value: string) => {
     updateSearchParam('search', value);
-  };
+  }, [searchParams, setSearchParams]);
 
-  const handleSortChange = (value: string) => {
+  const handleSortChange = useCallback((value: string) => {
     updateSearchParam('sort', value);
-  };
+  }, [searchParams, setSearchParams]);
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = useCallback((page: number) => {
     updateSearchParam('page', String(page));
-  };
+  }, [searchParams, setSearchParams]);
 
-  const handleRetry = () => {
+  const handleRetry = useCallback(() => {
     globalThis.location.reload();
-  };
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -109,7 +119,22 @@ export default function CatalogPage() {
         <>
           {data.items.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">No items found. Try adjusting your search.</p>
+              <svg
+                className="mx-auto h-24 w-24 text-gray-400 mb-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                />
+              </svg>
+              <p className="text-gray-500 text-lg font-medium mb-2">No items found</p>
+              <p className="text-gray-400 text-sm">Try adjusting your search or browse all products</p>
             </div>
           ) : (
             <>

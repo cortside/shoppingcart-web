@@ -27,7 +27,11 @@ export default function QuantitySelector({ value, onChange, min = 1, max = 99 }:
     const newValue = Number.parseInt(e.target.value, 10);
     if (!Number.isNaN(newValue) && newValue >= min && newValue <= max) {
       onChange(newValue);
+    } else if (e.target.value === '') {
+      // Allow clearing to re-type, reset to minimum
+      onChange(min);
     }
+    // Invalid input is ignored, component re-renders with current valid value
   };
 
   return (
