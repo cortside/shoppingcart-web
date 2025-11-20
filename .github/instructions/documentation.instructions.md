@@ -488,7 +488,7 @@ Before committing documentation:
 | Detailed phase plan     | `memory-bank/planning/PHASEX_PLAN.md`   |
 | Daily progress notes    | `memory-bank/current/phaseX-notes.md`   |
 | Completed phase summary | `docs/completed/PHASEX_COMPLETION.md`   |
-| Research spike results  | `docs/completed/spike-*.md`             |
+| Research spike results  | `memory-bank/archive/spike-*.md`        |
 | Architectural decisions | `docs/architecture/decisions/`          |
 | User requirements       | `docs/requirements/`                    |
 | Lessons learned         | `docs/completed/`                       |
