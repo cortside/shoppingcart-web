@@ -321,18 +321,26 @@ When managing a todo list:
 1. **Create/Update plan document** with todo list section
 2. **Update the file** after completing each task
 3. **Show progress** by updating status indicators
-4. **Never use** `manage_todo_list` tool as sole tracking mechanism
-5. **Always commit** todo list changes to the plan document
+4. **NEVER use** `manage_todo_list` tool when a plan document exists with a todo list
+5. **ONLY use** `manage_todo_list` for ad-hoc user requests without an existing plan document
+6. **Always update** todo list changes directly in the plan document itself
 
 **Example Update Flow:**
 
 ```bash
 # After completing a task:
-1. Update status from [ ] to [x] in plan document
+1. Update status from [ ] to [~] (in-progress) or [x] (completed) in plan document
 2. Add completion notes (files created, key decisions)
 3. Update "Last Updated" date in document header
 4. Let user handle git commit (per workflow rules)
 ```
+
+**Critical: Plan Documents vs In-Memory Todos:**
+
+- ✅ **Phase plan exists?** → Update todo list in `memory-bank/current/PHASEX_PLAN.md`
+- ❌ **Don't duplicate** in `manage_todo_list` tool when plan exists
+- ✅ **No plan document?** → Use `manage_todo_list` for ad-hoc tracking only
+- ✅ **Always prefer** plan documents over in-memory tracking
 
 ## Documentation Workflow
 
