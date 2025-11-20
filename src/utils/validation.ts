@@ -22,9 +22,11 @@ export function isValidBirthdate(date: string): boolean {
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
   if (!dateRegex.test(date)) return false;
 
-  // Verify it's a valid date
+  // Verify it's a valid date and matches input exactly
   const parsedDate = new Date(date);
-  return !Number.isNaN(parsedDate.getTime());
+  if (Number.isNaN(parsedDate.getTime())) return false;
+  // Ensure parsed date matches input string (no silent correction)
+  return parsedDate.toISOString().slice(0, 10) === date;
 }
 
 /**

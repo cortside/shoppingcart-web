@@ -27,3 +27,4 @@ public/config.local.json
 *.sw?
 
 *.local.json
+.temp
