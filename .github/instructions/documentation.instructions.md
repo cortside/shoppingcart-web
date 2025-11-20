@@ -366,13 +366,29 @@ Update: Mark first task as [~] in-progress
 Create: Additional notes files as needed (memory-bank/current/phaseX-notes.md)
 ```
 
-**⚠️ AI ASSISTANTS: Do NOT leave duplicate plan documents.**
+**⚠️ AI ASSISTANTS: MUST USE TERMINAL COMMANDS TO MOVE FILES**
 
-When moving a plan from `planning/` to `current/`:
-1. Read the original file from `planning/`
-2. Create the new file in `current/` with updated status
-3. Delete the original file from `planning/`
-4. This must be an atomic move operation—NEVER have both files exist simultaneously
+**CRITICAL RULE:** When moving files (e.g., from `planning/` to `current/`):
+
+1. **ALWAYS use terminal commands**: `Move-Item` (PowerShell) or `mv` (bash/zsh)
+2. **NEVER read file + create file + delete file**
+3. **This is an atomic operation** that preserves file history in git
+
+**Correct approach:**
+```powershell
+Move-Item "memory-bank/planning/PHASE2_PLAN.md" "memory-bank/current/PHASE2_PLAN.md"
+```
+
+**Then update the moved file's header:**
+- Change status from "Planning" to "Active"
+- Update "Last Updated" date
+- Mark first task as [~] in-progress
+
+**Wrong approach (DO NOT DO THIS):**
+❌ Read planning file
+❌ Create new current file
+❌ Delete planning file
+This creates a new file in git history instead of moving it!
 
 **Rationale:**
 
@@ -380,6 +396,7 @@ When moving a plan from `planning/` to `current/`:
 - ✅ Easy to see what's happening NOW (look in `current/` directory)
 - ✅ Prevents confusion about which plan is active
 - ✅ Plan evolution tracked in version control
+- ✅ Preserves git file history when using `mv`/`Move-Item`
 
 **During Implementation:**
 
