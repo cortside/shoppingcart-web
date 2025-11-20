@@ -370,24 +370,32 @@ Status: Planning - not yet started
 **⚠️ CRITICAL: When work begins, MOVE the plan from planning/ to current/**
 
 ```
-Move: memory-bank/planning/PHASEX_PLAN.md → memory-bank/current/PHASEX_IMPLEMENTATION.md
+Move: memory-bank/planning/PHASEX_PLAN.md → memory-bank/current/PHASEX_PLAN.md
 Update: Change status to "Active"
 Update: Add "Last Updated" date
 Update: Mark first task as [~] in-progress
 Create: Additional notes files as needed (memory-bank/current/phaseX-notes.md)
 ```
 
+**⚠️ AI ASSISTANTS: Do NOT leave duplicate plan documents.**
+
+When moving a plan from `planning/` to `current/`:
+1. Read the original file from `planning/`
+2. Create the new file in `current/` with updated status
+3. Delete the original file from `planning/`
+4. This must be an atomic move operation—NEVER have both files exist simultaneously
+
 **Rationale:**
 
 - ✅ Clear separation: `planning/` = future work, `current/` = active work
 - ✅ Easy to see what's happening NOW (look in `current/` directory)
 - ✅ Prevents confusion about which plan is active
-- ✅ Plan evolution tracked in version control (move = git mv)
+- ✅ Plan evolution tracked in version control
 
 **During Implementation:**
 
 ```
-Update: memory-bank/current/PHASEX_IMPLEMENTATION.md
+Update: memory-bank/current/PHASEX_PLAN.md
 Frequency: After each task completion, daily/weekly for progress notes
 Update: Todo list status indicators [ ] → [~] → [x]
 Update: "Last Updated" date in header
@@ -423,10 +431,12 @@ Update: Root README.md with new features (brief)
 When reorganizing:
 
 1. Identify correct location using rules above
-2. Move file using `git mv` (preserves history)
+2. Move file (using terminal commands, i.e. mv or move-item)
 3. Update all references to the file
 4. Update README.md files in affected directories
-5. Commit with message: `docs: move X to Y (reason)`
+5. Let user handle git operations per workflow.instructions.md
+
+**Note for AI/Automation:** Never leave both old and new files in place.  Don't rename file when moving, keep the original name.
 
 ## Special Cases
 

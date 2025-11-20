@@ -1,136 +1,122 @@
-# ShoppingCart Web
+# Acme Shopping Cart Web
 
-An Angular 18 e-commerce shopping cart application with authentication, product catalog, cart management, and order processing.
+A modern React single-page application for e-commerce shopping cart functionality with authentication, catalog browsing, cart management, and checkout.
 
-## Description
+## Overview
 
-ShoppingCart Web is a single-page application (SPA) that provides a complete online shopping experience including user authentication, product browsing, shopping cart functionality, and order checkout.
+This application provides customers with an intuitive online shopping experience backed by secure APIs and identity platform. Features include:
 
-**For detailed architecture and features**, see [docs/PROJECT_OVERVIEW.md](docs/PROJECT_OVERVIEW.md)
+- **Public Catalog Browsing** - Browse products without login
+- **Shopping Cart** - Add, update, and remove items
+- **User Authentication** - Secure OIDC-based login (required for checkout)
+- **Checkout** - Complete orders with address information
+- **Order History** - View past orders
+- **Profile Management** - Update customer information
+
+## Technology Stack
+
+- **React 19** with TypeScript
+- **Vite** - Fast build tool and dev server
+- **TailwindCSS** - Utility-first styling
+- **React Router 6** - Client-side routing
+- **OIDC** - OpenID Connect authentication
 
 ## Prerequisites
 
-- Node.js 18+ (compatible with Angular 18)
-- npm package manager
-- Backend services running (Catalog API, ShoppingCart API, IdentityServer)
+- **Node.js** 18+ and npm
+- **Backend Services** (must be running):
+  - Catalog API - `http://localhost:5001`
+  - ShoppingCart API - `http://localhost:5000`
+  - Identity Server - `http://localhost:5002`
 
-## Quick Start
+## Getting Started
 
-1. **Create local configuration** - Create `src/config.local.json` with minimum `{}` content:
+### Installation
 
-   ```bash
-   if(!(Test-Path ".\src\config.local.json")) { New-Item -path ".\src" -name "config.local.json" -type "file" -value "{}" }
-   ```
+```bash
+npm install
+```
 
-2. **Install dependencies**:
+### Configuration
 
-   ```bash
-   npm ci
-   ```
+The application uses `public/config.json` for base configuration. To override settings locally:
 
-3. **Build and run**:
+1. Create `public/config.local.json` (git-ignored)
+2. Add your local overrides:
 
-   ```bash
-   npm run build    # Build core library + application
-   npm start        # Start dev server at localhost:4200
-   ```
+```json
+{
+  "catalogApi": { "url": "http://localhost:5001" },
+  "shoppingCartApi": { "url": "http://localhost:5000" },
+  "identity": {
+    "authority": "http://localhost:5002",
+    "clientId": "shoppingcart-web",
+    "scope": "openid profile shoppingcart-api catalog-api"
+  }
+}
+```
 
-4. **Run tests**:
+### Development Server
 
-   ```bash
-   npm run test:ci  # Unit tests
-   npm run lint     # Code quality checks
-   ```
+```bash
+npm run dev
+```
 
-## How to Build
+Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+### Build for Production
 
 ```bash
 npm run build
 ```
 
-Builds both the core library (`projects/core/`) and main application. Output in `dist/`.
+Output will be in the `dist/` directory.
 
-## How to Test
+### Preview Production Build
 
 ```bash
-npm run test:ci        # Unit tests (CI mode)
-npm test               # Unit tests (watch mode)
-npm run cypress:open   # E2E tests (requires dev server)
+npm run preview
 ```
 
-## How to Run
+### Code Quality
 
+**Lint:**
 ```bash
-npm start  # Development server at http://localhost:4200
+npm run lint
 ```
 
-Automatically builds core library before starting the dev server.
-
-## Common Commands
-
+**Format:**
 ```bash
-npm ci                  # Clean install dependencies
-npm run lint            # Check code quality
-npm run lint:fix        # Fix linting issues
-npm run prettier:fix    # Auto-format code
+npm run format
+```
+
+## Project Structure
+
+```
+src/
+  api/               # HTTP clients for backend services
+  auth/              # OIDC authentication
+  components/
+    common/          # Reusable components
+    layout/          # Header, Footer, Main layout
+  hooks/             # Custom React hooks
+  contexts/          # React contexts (Auth, Cart)
+  pages/             # Route-level page components
+  routes/            # Route configuration
+  types/             # TypeScript type definitions
+  utils/             # Utility functions (config loader, etc.)
 ```
 
 ## Documentation
 
-- **Project Overview**: [docs/PROJECT_OVERVIEW.md](docs/PROJECT_OVERVIEW.md) - Architecture, features, patterns
-- **Copilot Instructions**: [.github/copilot-instructions.md](.github/copilot-instructions.md) - Quick reference for AI assistants
-- **Coding Standards**: [.github/instructions/](.github/instructions/) - TypeScript, security, performance, workflow
+- [Overview](docs/requirements/Overview.md) - Executive summary
+- [Functional Requirements](docs/requirements/Functional%20&%20Behavioral%20Requirements.md) - User stories and acceptance criteria
+- [Technical Specification](docs/architecture/Technical%20&%20Architectural%20Specification.md) - Architecture and implementation details
 
-## Design System
+## Development Phases
 
-This project follows [Muzieh Design System](https://ruifang.github.io/designsystem)
+This project is being built in phases. See `memory-bank/current/` for active development plans.
 
-## Recommended VS Code Extensions
+## License
 
-- Angular Language Service
-- Prettier
-- Tailwind CSS IntelliSense
-
-## Contributing
-
-See [.github/instructions/workflow.instructions.md](.github/instructions/workflow.instructions.md) for git workflow and contribution guidelines.
-
-## Todo
-
--   [ ] css framework, responsiveness
--   [ ] design system
--   [x] local configuration
--   [ ] module configuration
--   [ ] api client
--   [ ] logging
--   [ ] path setup
--   [ ] formatting
--   [ ] schematics
--   [ ] cypress
--   [ ] analytics
--   [x] authentication
--   [ ] authorization
--   [ ] error pages
--   [ ] forms
--   [ ] component styles
--   [ ] layout
--   [ ] health
--   [x] lazy module
--   [ ] commands
--   [ ] build
--   [ ] error handling
--   [ ] bootstrap failure
--   [ ] page service lifecycle
--   [ ] separation of ui and domain
--   [ ] state management
-
-## Tasks
-
--   module import cleanup
-
-## Notes
-
-### authentication
-
--   When testing in private mode, allow third-party cookies to avoid authentication errors
--   Need to create signin-oidc.html and add output to angular.json
+Copyright © 2025 Acme Shopping. All rights reserved.

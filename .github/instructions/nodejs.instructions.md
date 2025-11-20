@@ -11,6 +11,114 @@ applyTo: 'package.json,package-lock.json,**/package.json,tsconfig.json,**/tsconf
 
 This document defines **HOW** to work with Node.js/npm projects. For other languages, see respective instruction files.
 
+## ⚠️ AI Agent Command Execution Rules
+
+**These rules apply to AI assistants (like GitHub Copilot) executing npm commands via terminal.**
+
+### Non-Interactive Command Execution
+
+**CRITICAL: AI agents MUST use non-interactive flags for commands that prompt for user input.**
+
+**Commands that require confirmation:**
+
+```bash
+# ❌ BAD: Prompts user with "Ok to proceed? (y)"
+npm create vite@latest . -- --template react-ts
+
+# ✅ GOOD: Use --yes flag to auto-confirm
+npm create vite@latest . -- --template react-ts --yes
+
+# ❌ BAD: May prompt for overwrites
+npm init
+
+# ✅ GOOD: Auto-confirm
+npm init --yes
+```
+
+**Rationale:**
+- AI agents cannot interact with terminal prompts
+- Commands requiring user input will hang indefinitely
+- Always use `--yes`, `-y`, or equivalent auto-confirm flags
+- Check command documentation for non-interactive modes
+
+**Common commands needing flags:**
+- `npm create` → add `--yes`
+- `npm init` → add `--yes` or `-y`
+- `npx` (some tools) → check tool's non-interactive options
+
+### Service Command Execution
+
+**CRITICAL: AI agents MUST recognize and properly handle long-running service commands.**
+
+**Service commands start processes that run indefinitely (dev servers, watch modes, etc.):**
+
+```bash
+# These are SERVICE commands (background processes):
+npm run dev          # Starts dev server
+npm start            # Starts application
+npm run serve        # Serves built files
+npm run watch        # Watches for file changes
+
+# These are TASK commands (run to completion):
+npm run build        # Compiles code
+npm test             # Runs tests
+npm run lint         # Lints code
+```
+
+**How AI should handle services:**
+
+1. **Recognize service patterns:**
+   - Commands named: `dev`, `start`, `serve`, `watch`
+   - Scripts that start servers (express, vite, webpack-dev-server)
+   - Any command expected to run continuously
+
+2. **Execute as background process:**
+   ```bash
+   # Use isBackground=true parameter in run_in_terminal tool
+   # This tells the system the command won't terminate normally
+   ```
+
+3. **Verify service started:**
+   - Wait 2-5 seconds for startup messages
+   - Check for success indicators ("ready on http://localhost:5173")
+   - Report to user that service is running
+
+4. **Don't wait for termination:**
+   - Service commands don't exit until manually stopped
+   - AI should return control to user after verifying startup
+   - User will stop service when needed (Ctrl+C)
+
+**Example service detection logic:**
+
+```
+If command matches:
+  - "npm run dev"
+  - "npm start"
+  - "npm run serve"
+  - Script content includes: "vite", "webpack serve", "next dev", "nodemon"
+Then:
+  - Execute with isBackground=true
+  - Wait for startup confirmation
+  - Report "Service running on [port]"
+  - Continue with next task
+```
+
+**Rationale:**
+- Dev servers run until explicitly stopped by user
+- AI waiting for command completion will hang indefinitely
+- Background execution allows workflow to continue
+- User maintains control of when to stop services
+
+### Command Execution Checklist
+
+Before executing npm commands, AI should verify:
+
+- [ ] Does command require user confirmation? → Add `--yes` flag
+- [ ] Is this a service/long-running process? → Use `isBackground=true`
+- [ ] Is this a one-time task (build/test/lint)? → Execute normally
+- [ ] Check script definition in package.json if unsure
+- [ ] Report service status after background commands start
+
 ## Build Standards
 
 ### Building Projects

@@ -1,0 +1,9 @@
+{
+  "catalogApi": { "url": "http://localhost:5001" },
+  "shoppingCartApi": { "url": "http://localhost:5000" },
+  "identity": {
+    "authority": "http://localhost:5002",
+    "clientId": "shoppingcart-web",
+    "scope": "openid profile shoppingcart-api catalog-api"
+  }
+}
