@@ -34,6 +34,7 @@ src/
   api/              # HTTP clients for backend services
   auth/             # OIDC auth provider
   components/       # Reusable components
+  hooks/            # Reusable React hooks (e.g., useAuth, useCart)
   contexts/         # React contexts (Auth, Cart)
   pages/            # Route-level page components
   routes/           # Route configuration

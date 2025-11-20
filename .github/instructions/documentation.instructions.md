@@ -30,8 +30,7 @@ repository-root/
 │   └── completed/                # Completed work documentation
 ├── memory-bank/                   # Active work (internal team)
 │   ├── current/                  # Current phase work in progress
-│   ├── planning/                 # Upcoming work plans
-│   └── archive/                  # Completed work from current/
+│   └── planning/                 # Upcoming work plans
 └── [source code directories]
 ```
 
