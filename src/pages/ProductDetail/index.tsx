@@ -4,7 +4,7 @@
  * Per FR-005, FR-006
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getItemBySku } from '../../api/catalogApi';
 import { useCart } from '../../contexts/CartContext';
@@ -62,7 +62,7 @@ export default function ProductDetailPage() {
     fetchItem();
   }, [sku]);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = useCallback(() => {
     if (item) {
       setAddingToCart(true);
       try {
@@ -73,11 +73,11 @@ export default function ProductDetailPage() {
         setAddingToCart(false);
       }
     }
-  };
+  }, [item, quantity, addItem]);
 
-  const handleRetry = () => {
+  const handleRetry = useCallback(() => {
     globalThis.location.reload();
-  };
+  }, []);
 
   if (loading) {
     return <LoadingSpinner />;

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -25,6 +25,16 @@ export function Header() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showDropdown]);
+
+  // Keyboard navigation for dropdown
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setShowDropdown(false);
+    } else if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      setShowDropdown((prev) => !prev);
+    }
+  }, []);
 
   return (
     <header className="bg-gray-800 text-white shadow-md">
@@ -56,6 +66,7 @@ export function Header() {
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setShowDropdown(!showDropdown)}
+                  onKeyDown={handleKeyDown}
                   className="hover:text-gray-300 flex items-center gap-2"
                   aria-expanded={showDropdown}
                   aria-haspopup="true"

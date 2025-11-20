@@ -65,18 +65,20 @@ export default function CatalogPage() {
 
   // Update URL query params
   const updateSearchParam = useCallback((key: string, value: string) => {
-    const newParams = new URLSearchParams(searchParams);
-    if (value) {
-      newParams.set(key, value);
-    } else {
-      newParams.delete(key);
-    }
-    // Reset to page 1 when search or sort changes
-    if (key !== 'page') {
-      newParams.set('page', '1');
-    }
-    setSearchParams(newParams);
-  }, [searchParams, setSearchParams]);
+    setSearchParams((currentParams) => {
+      const newParams = new URLSearchParams(currentParams);
+      if (value) {
+        newParams.set(key, value);
+      } else {
+        newParams.delete(key);
+      }
+      // Reset to page 1 when search or sort changes
+      if (key !== 'page') {
+        newParams.set('page', '1');
+      }
+      return newParams;
+    });
+  }, [setSearchParams]);
 
   const handleSearchChange = useCallback((value: string) => {
     updateSearchParam('search', value);

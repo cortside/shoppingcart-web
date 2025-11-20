@@ -3,6 +3,8 @@
  * Previous/Next buttons and page number display
  */
 
+import { useCallback } from 'react';
+
 interface PaginationProps {
   readonly currentPage: number;
   readonly totalItems: number;
@@ -15,6 +17,14 @@ export default function Pagination({ currentPage, totalItems, pageSize, onPageCh
   const isFirstPage = currentPage === 1;
   const isLastPage = currentPage >= totalPages;
 
+  const handlePrevious = useCallback(() => {
+    onPageChange(currentPage - 1);
+  }, [onPageChange, currentPage]);
+
+  const handleNext = useCallback(() => {
+    onPageChange(currentPage + 1);
+  }, [onPageChange, currentPage]);
+
   if (totalPages <= 1) {
     return null;
   }
@@ -22,7 +32,7 @@ export default function Pagination({ currentPage, totalItems, pageSize, onPageCh
   return (
     <div className="flex items-center justify-center gap-4 mt-8">
       <button
-        onClick={() => onPageChange(currentPage - 1)}
+        onClick={handlePrevious}
         disabled={isFirstPage}
         className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white transition-colors"
         aria-label="Previous page"
@@ -46,7 +56,7 @@ export default function Pagination({ currentPage, totalItems, pageSize, onPageCh
       </span>
 
       <button
-        onClick={() => onPageChange(currentPage + 1)}
+        onClick={handleNext}
         disabled={isLastPage}
         className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white transition-colors"
         aria-label="Next page"

@@ -4,6 +4,7 @@
  * Per Phase 4 Plan and FR-007 through FR-011
  */
 
+import { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import type { CartItem as CartItemType } from '../../../types/Cart';
 import QuantitySelector from '../../ProductDetail/components/QuantitySelector';
@@ -17,13 +18,13 @@ interface CartItemProps {
 export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemProps) {
   const itemTotal = item.unitPrice * item.quantity;
 
-  const handleQuantityChange = (newQuantity: number) => {
+  const handleQuantityChange = useCallback((newQuantity: number) => {
     onUpdateQuantity(item.sku, newQuantity);
-  };
+  }, [onUpdateQuantity, item.sku]);
 
-  const handleRemove = () => {
+  const handleRemove = useCallback(() => {
     onRemove(item.sku);
-  };
+  }, [onRemove, item.sku]);
 
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 border-b border-gray-200 hover:bg-gray-50 transition-colors">
