@@ -53,7 +53,19 @@ This document defines **HOW** to work with version control, branches, commits, a
 
 ## Phase Completion Workflow
 
-**⚠️ CRITICAL: Before declaring any phase complete, a comprehensive code review MUST be performed.**
+**⚠️ CRITICAL: AI agents MUST NEVER mark a phase as complete without explicit user approval.**
+
+**AI agents are PROHIBITED from:**
+- ❌ Changing phase status to "Completed" without user command
+- ❌ Moving phase plans from `memory-bank/current/` to `docs/completed/` without user command
+- ❌ Declaring a phase "done" or "complete" on their own
+- ❌ Adding completion summaries without being asked
+
+**AI agents MUST:**
+- ✅ Implement all features and tests as requested
+- ✅ Report when all tasks are finished and ready for review
+- ✅ Wait for user to verify and approve completion
+- ✅ Only move files or update status when explicitly instructed by user
 
 ### Phase Completion Checklist
 
@@ -88,16 +100,20 @@ When completing a development phase, follow this workflow:
    - Re-test after fixes
    - Verify no new issues introduced
 
-5. **Documentation Updated**
-   - Phase plan status updated to "Completed"
-   - Todo list marked complete
-   - README updated if needed
-   - Move phase plan from `memory-bank/current/` to `docs/completed/`
+5. **Report to User for Approval** ⚠️
+   - **AI MUST STOP HERE and wait for user approval**
+   - Report what was implemented
+   - Show test results
+   - Highlight any issues or concerns
+   - **DO NOT proceed to step 6 without explicit user command**
 
-6. **User Approval**
+6. **User Approval and Completion (User-Initiated Only)**
    - User reviews changes
+   - User tests functionality manually
+   - User decides if phase is complete
+   - **User explicitly instructs AI to mark phase complete**
+   - Only then: Update status, move files, add completion summary
    - User performs git operations (add, commit, push)
-   - User declares phase complete
 
 ### Code Review Scope
 
