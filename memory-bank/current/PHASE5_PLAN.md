@@ -1,7 +1,7 @@
 # PHASE5_PLAN: Authentication & Protected Routes
 
-**Last Updated:** 2025-11-19  
-**Status:** Planning  
+**Last Updated:** 2025-11-20  
+**Status:** Active  
 **Owner:** Development Team
 
 ## Overview
@@ -240,62 +240,78 @@ Per Functional Requirements FR-012, FR-013, FR-013A:
 
 ### OIDC Client Implementation (Tasks 1-2)
 
-- [ ] **Task 1:** Implement OIDC client utilities
-  - Status: Not Started
+- [x] **Task 1:** Implement OIDC client utilities
+  - Status: Completed
   - Files: `src/auth/oidcClient.ts`
   - Content: `initiateLogin()`, `handleCallback()`, `initiateLogout()`
   
-- [ ] **Task 2:** Update AuthContext with real auth logic
-  - Status: Not Started
+- [x] **Task 2:** Update AuthContext with real auth logic
+  - Status: Completed
   - Files: `src/contexts/AuthContext.tsx`
   - Content: Integrate oidcClient, manage token state
   - Dependencies: Task 1
 
 ### Auth Pages (Tasks 3-4)
 
-- [ ] **Task 3:** Implement Login page
-  - Status: Not Started
+- [x] **Task 3:** Implement Login page
+  - Status: Completed
   - Files: `src/pages/Login/index.tsx`
   - Content: Call initiateLogin(), show loading message
   - Dependencies: Task 1
   
-- [ ] **Task 4:** Implement AuthCallback page
-  - Status: Not Started
+- [x] **Task 4:** Implement AuthCallback page
+  - Status: Completed
   - Files: `src/pages/AuthCallback/index.tsx`
   - Content: Parse tokens, update context, redirect
   - Dependencies: Task 2
 
 ### Route Protection (Task 5)
 
-- [ ] **Task 5:** Create RequireAuth wrapper
-  - Status: Not Started
+- [x] **Task 5:** Create RequireAuth wrapper
+  - Status: Completed
   - Files: `src/auth/RequireAuth.tsx`
   - Content: Check auth, redirect if needed
   - Dependencies: Task 2
 
 ### Protected Routes Setup (Task 6)
 
-- [ ] **Task 6:** Wrap protected routes with RequireAuth
-  - Status: Not Started
+- [x] **Task 6:** Wrap protected routes with RequireAuth
+  - Status: Completed
   - Files: `src/routes/AppRoutes.tsx`
   - Action: Wrap `/checkout`, `/account/*` routes
   - Dependencies: Task 5
 
 ### Header Updates (Task 7)
 
-- [ ] **Task 7:** Update Header with auth UI
-  - Status: Not Started
+- [x] **Task 7:** Update Header with auth UI
+  - Status: Completed
   - Files: `src/components/layout/Header.tsx`
   - Content: Login/Logout buttons, user name display, account dropdown
   - Dependencies: Task 2
 
 ### Testing (Task 8)
 
-- [ ] **Task 8:** End-to-end authentication testing
-  - Status: Not Started
+- [x] **Task 8:** End-to-end authentication testing
+  - Status: Completed
   - Action: Test login flow, protected routes, redirect-back, logout
   - Dependencies: All previous tasks
-  - Notes: Requires IdentityServer running
+  - Notes: IdentityServer integration verified, session persistence implemented
+
+## Implementation Notes
+
+### Session Persistence
+
+Authentication state is persisted to `sessionStorage` to maintain login across page refreshes:
+
+- **Storage Key:** `auth_state`
+- **Data Stored:** `accessToken`, `idToken`, `user`, `customerResourceId`
+- **Location:** `src/contexts/AuthContext.tsx`
+- **Behavior:**
+  - State loaded from sessionStorage on app initialization
+  - State saved to sessionStorage whenever auth state changes
+  - State cleared from sessionStorage on logout
+  - Uses sessionStorage (not localStorage) per security best practices
+  - Session expires when browser tab/window closes
 
 ## Notes
 

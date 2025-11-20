@@ -64,7 +64,7 @@ export default function CatalogPage() {
   }, [pageNumber, search, sort]);
 
   // Update URL query params
-  const updateSearchParam = (key: string, value: string) => {
+  const updateSearchParam = useCallback((key: string, value: string) => {
     const newParams = new URLSearchParams(searchParams);
     if (value) {
       newParams.set(key, value);
@@ -76,19 +76,19 @@ export default function CatalogPage() {
       newParams.set('page', '1');
     }
     setSearchParams(newParams);
-  };
+  }, [searchParams, setSearchParams]);
 
   const handleSearchChange = useCallback((value: string) => {
     updateSearchParam('search', value);
-  }, [searchParams, setSearchParams]);
+  }, [updateSearchParam]);
 
   const handleSortChange = useCallback((value: string) => {
     updateSearchParam('sort', value);
-  }, [searchParams, setSearchParams]);
+  }, [updateSearchParam]);
 
   const handlePageChange = useCallback((page: number) => {
     updateSearchParam('page', String(page));
-  }, [searchParams, setSearchParams]);
+  }, [updateSearchParam]);
 
   const handleRetry = useCallback(() => {
     globalThis.location.reload();

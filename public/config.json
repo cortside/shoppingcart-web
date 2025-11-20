@@ -2,7 +2,7 @@
   "catalogApi": { "url": "https://mockserver.cortside.net" },
   "shoppingCartApi": { "url": "https://shoppingcartapi.cortside.net" },
   "identity": {
-    "authority": "https://identity.cortside.net",
+    "authority": "https://identityserver.cortside.net",
     "clientId": "shoppingcart-web",
     "scope": "openid profile shoppingcart-api catalog-api"
   }
