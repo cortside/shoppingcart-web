@@ -388,9 +388,16 @@ Add: Decisions, blockers, solutions, lessons learned
 ```
 Move: memory-bank/current/PHASEX_IMPLEMENTATION.md → docs/completed/PHASEX_IMPLEMENTATION.md
 Keep: Same filename (no renaming)
-Update: docs/README.md with links to new docs
-Update: Root README.md with new features (brief)
+Update: Change status to "Completed" in document header
+Do NOT: Update docs/README.md or create completion tracking lists
 ```
+
+**What NOT to Update When Completing Phases:**
+
+- ❌ Do NOT add "Completed Phases" sections to `docs/README.md`
+- ❌ Do NOT create phase tracking lists or indexes
+- ❌ `docs/README.md` is an index of documentation SECTIONS (requirements/, architecture/, etc.), NOT individual phase files
+- ✅ Completed phase files in `docs/completed/` are self-documenting - they exist there, that's the record
 
 ### Updating Existing Documentation
 
