@@ -15,8 +15,8 @@ This document provides an overview of all development phases for the ShoppingCar
 | Phase 3 | ✅ Completed | Public Pages (Catalog & Product Detail) | [docs/completed/](../../docs/completed/PHASE3_PLAN.md) |
 | Phase 4 | ✅ Completed | Cart Page | [docs/completed/](../../docs/completed/PHASE4_PLAN.md) |
 | Phase 5 | ✅ Completed | Authentication & Protected Routes | [docs/completed/](../../docs/completed/PHASE5_PLAN.md) |
-| Phase 6 | 📋 Planning | Checkout Flow | [PHASE6_PLAN.md](./PHASE6_PLAN.md) |
-| Phase 7 | 📋 Planning | Order History | [PHASE7_PLAN.md](./PHASE7_PLAN.md) |
+| Phase 6 | ✅ Completed | Checkout Flow | [docs/completed/](../../docs/completed/PHASE6_PLAN.md) |
+| Phase 7 | ✅ Completed | Order History | [docs/completed/](../../docs/completed/PHASE7_PLAN.md) |
 | Phase 8 | 📋 Planning | User Profile Management | [PHASE8_PLAN.md](./PHASE8_PLAN.md) |
 | Phase 9 | 📋 Planning | Testing, Quality Assurance & Polish | [PHASE9_PLAN.md](./PHASE9_PLAN.md) |
 | Phase 10 | 📋 Planning | Deployment & Docker Containerization | [PHASE10_PLAN.md](./PHASE10_PLAN.md) |
@@ -117,10 +117,10 @@ Implement OpenID Connect authentication with IdentityServer, protect routes that
 
 ---
 
-### Phase 6: Checkout Flow 📋
+### Phase 6: Checkout Flow ✅
 
-**Status:** Planning  
-**Document:** [PHASE6_PLAN.md](./PHASE6_PLAN.md)
+**Status:** Completed  
+**Document:** [PHASE6_PLAN.md](../../docs/completed/PHASE6_PLAN.md)
 
 Implement the complete checkout experience where authenticated users provide customer information and shipping address, review their order, and submit to create an order via the ShoppingCart API.
 
@@ -136,10 +136,10 @@ Implement the complete checkout experience where authenticated users provide cus
 
 ---
 
-### Phase 7: Order History 📋
+### Phase 7: Order History ✅
 
-**Status:** Planning  
-**Document:** [PHASE7_PLAN.md](./PHASE7_PLAN.md)
+**Status:** Completed  
+**Document:** [PHASE7_PLAN.md](../../docs/completed/PHASE7_PLAN.md)
 
 Implement the Order History page where authenticated users can view their past orders in a paginated list. This provides transparency and order tracking capabilities.
 
@@ -236,12 +236,12 @@ Phase 10 (Deployment)
 
 ---
 
-## Current Status (as of November 19, 2025)
+## Current Status (as of November 20, 2025)
 
-- **Completed:** Phases 1-3
+- **Completed:** Phases 1-7
 - **In Progress:** None
-- **Next Up:** Phase 4 (Cart Page)
-- **Overall Progress:** 3 of 10 phases complete (30%)
+- **Next Up:** Phase 8 (User Profile Management)
+- **Overall Progress:** 7 of 10 phases complete (70%)
 
 ---
 
