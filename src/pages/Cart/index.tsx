@@ -4,7 +4,7 @@
  * Per FR-007 through FR-011 and Phase 4 Plan
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useCart } from '../../contexts/CartContext';
 import { loadCheckoutData, clearCheckoutData } from '../../utils/storage';
 import CartItem from './components/CartItem';
@@ -16,17 +16,17 @@ import type { Address } from '../../types/Orders';
 
 export default function CartPage() {
   const { items, itemCount, subtotal, updateQuantity, removeItem } = useCart();
-  const [savedCustomerInfo, setSavedCustomerInfo] = useState<CustomerInput | null>(null);
-  const [savedShippingAddress, setSavedShippingAddress] = useState<Address | null>(null);
 
-  // Load saved checkout data on mount
-  useEffect(() => {
+  // Use lazy initialization to load saved checkout data
+  const [savedCustomerInfo, setSavedCustomerInfo] = useState<CustomerInput | null>(() => {
     const savedData = loadCheckoutData();
-    if (savedData) {
-      setSavedCustomerInfo(savedData.customerInfo);
-      setSavedShippingAddress(savedData.shippingAddress);
-    }
-  }, []);
+    return savedData?.customerInfo ?? null;
+  });
+
+  const [savedShippingAddress, setSavedShippingAddress] = useState<Address | null>(() => {
+    const savedData = loadCheckoutData();
+    return savedData?.shippingAddress ?? null;
+  });
 
   // Handle clearing saved checkout data
   const handleClearCheckoutData = useCallback(() => {

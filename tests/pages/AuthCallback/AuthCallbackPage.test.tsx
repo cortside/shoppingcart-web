@@ -74,6 +74,9 @@ describe('AuthCallbackPage', () => {
   });
 
   it('should handle callback error', async () => {
+    // Suppress expected console.error
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
     vi.spyOn(oidcClient, 'handleCallback').mockImplementation(() => {
       throw new Error('Invalid token');
     });
@@ -91,9 +94,14 @@ describe('AuthCallbackPage', () => {
     });
 
     expect(screen.getByText('Return to Home')).toBeInTheDocument();
+    expect(consoleErrorSpy).toHaveBeenCalled();
+    consoleErrorSpy.mockRestore();
   });
 
   it('should handle missing tokens error', async () => {
+    // Suppress expected console.error
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
     vi.spyOn(oidcClient, 'handleCallback').mockImplementation(() => {
       throw new Error('Missing tokens in authentication callback');
     });
@@ -109,6 +117,9 @@ describe('AuthCallbackPage', () => {
     await waitFor(() => {
       expect(screen.getByText('Missing tokens in authentication callback')).toBeInTheDocument();
     });
+
+    expect(consoleErrorSpy).toHaveBeenCalled();
+    consoleErrorSpy.mockRestore();
   });
 
   it('should only process callback once', async () => {
