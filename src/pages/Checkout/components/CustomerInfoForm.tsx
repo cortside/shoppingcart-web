@@ -4,7 +4,7 @@
  * Per Technical Specification Section 5.2 and FR-014
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, memo } from 'react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { getCustomer } from '../../../api/shoppingCartApi';
 import type { CustomerInput } from '../../../types/Customer';
@@ -30,7 +30,7 @@ interface FormErrors {
  * Collects or displays customer information during checkout
  * Prefills data if user has existing customer record
  */
-export default function CustomerInfoForm({ onContinue, initialData }: CustomerInfoFormProps) {
+const CustomerInfoForm = memo(function CustomerInfoForm({ onContinue, initialData }: CustomerInfoFormProps) {
   const { customerResourceId } = useAuth();
 
   // Form state
@@ -84,20 +84,23 @@ export default function CustomerInfoForm({ onContinue, initialData }: CustomerIn
   /**
    * Handle input change
    */
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
     // Clear error for this field when user starts typing
-    if (errors[name as keyof FormErrors]) {
-      setErrors((prev) => ({ ...prev, [name]: undefined }));
-    }
-  };
+    setErrors((prev) => {
+      if (prev[name as keyof FormErrors]) {
+        return { ...prev, [name]: undefined };
+      }
+      return prev;
+    });
+  }, []);
 
   /**
    * Validate form
    */
-  const validateForm = (): boolean => {
+  const validateForm = useCallback((): boolean => {
     const newErrors: FormErrors = {};
 
     // Validate firstName
@@ -137,18 +140,18 @@ export default function CustomerInfoForm({ onContinue, initialData }: CustomerIn
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  }, [formData]);
 
   /**
    * Handle form submission
    */
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
 
     if (validateForm()) {
       onContinue(formData);
     }
-  };
+  }, [validateForm, onContinue, formData]);
 
   if (loading) {
     return (
@@ -274,4 +277,8 @@ export default function CustomerInfoForm({ onContinue, initialData }: CustomerIn
       </form>
     </div>
   );
-}
+});
+
+CustomerInfoForm.displayName = 'CustomerInfoForm';
+
+export default CustomerInfoForm;

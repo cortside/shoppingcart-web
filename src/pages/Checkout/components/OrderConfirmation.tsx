@@ -4,6 +4,7 @@
  * Per FR-017 and FR-018
  */
 
+import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import Button from '../../../components/common/Button';
 
@@ -15,7 +16,7 @@ interface OrderConfirmationProps {
  * OrderConfirmation Component
  * Success page shown after order is placed
  */
-export default function OrderConfirmation({ orderResourceId }: OrderConfirmationProps) {
+const OrderConfirmation = memo(function OrderConfirmation({ orderResourceId }: OrderConfirmationProps) {
   return (
     <div className="max-w-2xl mx-auto text-center py-12">
       {/* Success Icon */}
@@ -66,4 +67,8 @@ export default function OrderConfirmation({ orderResourceId }: OrderConfirmation
       </div>
     </div>
   );
-}
+});
+
+OrderConfirmation.displayName = 'OrderConfirmation';
+
+export default OrderConfirmation;

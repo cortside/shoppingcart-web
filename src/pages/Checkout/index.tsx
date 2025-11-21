@@ -9,7 +9,7 @@
  * 4. Confirmation (separate route)
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext';
@@ -61,41 +61,41 @@ export default function CheckoutPage() {
   /**
    * Handle customer info form completion
    */
-  const handleCustomerInfoContinue = (info: CustomerInput) => {
+  const handleCustomerInfoContinue = useCallback((info: CustomerInput) => {
     setCustomerInfo(info);
     setCurrentStep('shippingAddress');
     setError(null);
-  };
+  }, []);
 
   /**
    * Handle shipping address form completion
    */
-  const handleShippingAddressContinue = (address: Address) => {
+  const handleShippingAddressContinue = useCallback((address: Address) => {
     setShippingAddress(address);
     setCurrentStep('orderReview');
     setError(null);
-  };
+  }, []);
 
   /**
    * Handle back to customer info
    */
-  const handleBackToCustomerInfo = () => {
+  const handleBackToCustomerInfo = useCallback(() => {
     setCurrentStep('customerInfo');
     setError(null);
-  };
+  }, []);
 
   /**
    * Handle back to shipping address
    */
-  const handleBackToShippingAddress = () => {
+  const handleBackToShippingAddress = useCallback(() => {
     setCurrentStep('shippingAddress');
     setError(null);
-  };
+  }, []);
 
   /**
    * Handle order submission
    */
-  const handlePlaceOrder = async () => {
+  const handlePlaceOrder = useCallback(async () => {
     if (!customerInfo || !shippingAddress) {
       setError('Missing customer or address information. Please go back and complete all steps.');
       return;
@@ -159,7 +159,7 @@ export default function CheckoutPage() {
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [customerInfo, shippingAddress, items, customerResourceId, setCustomerResourceId, clearCart, navigate]);
 
   return (
     <div className="max-w-3xl mx-auto">

@@ -4,7 +4,7 @@
  * Per Technical Specification Section 5.2 and FR-015
  */
 
-import { useState } from 'react';
+import { useState, useCallback, memo } from 'react';
 import type { Address } from '../../../types/Orders';
 import { validateRequired, validatePostalCode } from '../../../utils/validation';
 import Button from '../../../components/common/Button';
@@ -27,7 +27,7 @@ interface FormErrors {
  * ShippingAddressForm Component
  * Collects shipping address during checkout
  */
-export default function ShippingAddressForm({ onContinue, onBack, initialData }: ShippingAddressFormProps) {
+const ShippingAddressForm = memo(function ShippingAddressForm({ onContinue, onBack, initialData }: ShippingAddressFormProps) {
   // Form state with default country
   const [formData, setFormData] = useState<Address>(
     initialData || {
@@ -44,20 +44,23 @@ export default function ShippingAddressForm({ onContinue, onBack, initialData }:
   /**
    * Handle input change
    */
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
     // Clear error for this field when user starts typing
-    if (errors[name as keyof FormErrors]) {
-      setErrors((prev) => ({ ...prev, [name]: undefined }));
-    }
-  };
+    setErrors((prev) => {
+      if (prev[name as keyof FormErrors]) {
+        return { ...prev, [name]: undefined };
+      }
+      return prev;
+    });
+  }, []);
 
   /**
    * Validate form
    */
-  const validateForm = (): boolean => {
+  const validateForm = useCallback((): boolean => {
     const newErrors: FormErrors = {};
 
     // Validate street
@@ -98,18 +101,18 @@ export default function ShippingAddressForm({ onContinue, onBack, initialData }:
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  }, [formData]);
 
   /**
    * Handle form submission
    */
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
 
     if (validateForm()) {
       onContinue(formData);
     }
-  };
+  }, [validateForm, onContinue, formData]);
 
   return (
     <div>
@@ -259,4 +262,8 @@ export default function ShippingAddressForm({ onContinue, onBack, initialData }:
       </form>
     </div>
   );
-}
+});
+
+ShippingAddressForm.displayName = 'ShippingAddressForm';
+
+export default ShippingAddressForm;

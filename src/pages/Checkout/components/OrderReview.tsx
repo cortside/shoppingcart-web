@@ -4,6 +4,7 @@
  * Per Technical Specification Section 5.2 and FR-016
  */
 
+import { memo } from 'react';
 import type { CustomerInput } from '../../../types/Customer';
 import type { Address } from '../../../types/Orders';
 import type { CartItem } from '../../../types/Cart';
@@ -24,7 +25,7 @@ interface OrderReviewProps {
  * OrderReview Component
  * Displays order summary and allows final review before submission
  */
-export default function OrderReview({
+const OrderReview = memo(function OrderReview({
   customerInfo,
   address,
   items,
@@ -121,4 +122,8 @@ export default function OrderReview({
       </div>
     </div>
   );
-}
+});
+
+OrderReview.displayName = 'OrderReview';
+
+export default OrderReview;

@@ -3,6 +3,7 @@
  * Displays saved customer and shipping information from previous checkout attempts
  */
 
+import { memo } from 'react';
 import type { CustomerInput } from '../../../types/Customer';
 import type { Address } from '../../../types/Orders';
 
@@ -12,7 +13,7 @@ interface SavedCheckoutInfoProps {
   readonly onClearData: () => void;
 }
 
-export default function SavedCheckoutInfo({ customerInfo, shippingAddress, onClearData }: SavedCheckoutInfoProps) {
+const SavedCheckoutInfo = memo(function SavedCheckoutInfo({ customerInfo, shippingAddress, onClearData }: SavedCheckoutInfoProps) {
   // Don't render if no saved data
   if (!customerInfo && !shippingAddress) {
     return null;
@@ -72,4 +73,8 @@ export default function SavedCheckoutInfo({ customerInfo, shippingAddress, onCle
       </div>
     </div>
   );
-}
+});
+
+SavedCheckoutInfo.displayName = 'SavedCheckoutInfo';
+
+export default SavedCheckoutInfo;

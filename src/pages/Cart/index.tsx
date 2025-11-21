@@ -4,7 +4,7 @@
  * Per FR-007 through FR-011 and Phase 4 Plan
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useCart } from '../../contexts/CartContext';
 import { loadCheckoutData, clearCheckoutData } from '../../utils/storage';
 import CartItem from './components/CartItem';
@@ -29,11 +29,11 @@ export default function CartPage() {
   }, []);
 
   // Handle clearing saved checkout data
-  const handleClearCheckoutData = () => {
+  const handleClearCheckoutData = useCallback(() => {
     clearCheckoutData();
     setSavedCustomerInfo(null);
     setSavedShippingAddress(null);
-  };
+  }, []);
 
   // Show empty cart state if no items
   if (items.length === 0) {
