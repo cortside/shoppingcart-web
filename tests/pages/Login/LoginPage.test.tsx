@@ -13,6 +13,8 @@ import * as oidcClient from '../../../src/auth/oidcClient';
 vi.mock('../../../src/auth/oidcClient', () => ({
   initiateLogin: vi.fn(),
   initiateLogout: vi.fn(),
+  getTokenExpiresIn: vi.fn(),
+  silentRenew: vi.fn(),
 }));
 
 // Mock httpClient

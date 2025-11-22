@@ -37,7 +37,9 @@ export default function OrdersPage() {
   const fetchOrders = useCallback(async (page: number) => {
     // Validate customerResourceId exists
     if (!customerResourceId) {
-      setError('No customer information found. Please complete checkout to create a customer record.');
+      setError(
+        'No order history available. To view your orders, please add items to your cart and complete checkout. Your customer account will be created during checkout.'
+      );
       setLoading(false);
       return;
     }

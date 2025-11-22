@@ -15,6 +15,8 @@ vi.mock('../../../../src/api/shoppingCartApi');
 vi.mock('../../../../src/auth/oidcClient', () => ({
   initiateLogin: vi.fn(),
   initiateLogout: vi.fn(),
+  getTokenExpiresIn: vi.fn(),
+  silentRenew: vi.fn(),
 }));
 
 describe('CustomerInfoForm', () => {
