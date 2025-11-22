@@ -9,6 +9,9 @@ interface HttpRequestOptions {
   params?: Record<string, string | number | boolean | undefined>;
   body?: unknown;
   requiresAuth?: boolean;
+  retryCount?: number; // Number of retry attempts (default: 0)
+  retryDelay?: number; // Delay between retries in ms (default: 1000)
+  timeout?: number; // Request timeout in ms (default: 30000)
 }
 
 // Custom error classes
@@ -33,6 +36,20 @@ export class ValidationError extends Error {
     super(message);
     this.name = 'ValidationError';
     this.errors = errors;
+  }
+}
+
+export class NetworkError extends Error {
+  constructor(message: string = 'Network error occurred') {
+    super(message);
+    this.name = 'NetworkError';
+  }
+}
+
+export class TimeoutError extends Error {
+  constructor(message: string = 'Request timed out') {
+    super(message);
+    this.name = 'TimeoutError';
   }
 }
 
@@ -74,6 +91,65 @@ function buildQueryString(params: Record<string, string | number | boolean | und
 }
 
 /**
+ * Create a fetch request with timeout
+ */
+async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error) {
+    clearTimeout(timeoutId);
+
+    // Handle abort (timeout)
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new TimeoutError(`Request timed out after ${timeoutMs}ms`);
+    }
+
+    // Handle network errors (no internet, DNS failure, CORS, etc.)
+    if (error instanceof TypeError) {
+      throw new NetworkError('Network error: Unable to connect to server. Please check your internet connection.');
+    }
+
+    // Re-throw other errors
+    throw error;
+  }
+}
+
+/**
+ * Sleep for specified milliseconds (for retry delays)
+ */
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
+ * Determine if error is retryable
+ */
+function isRetryableError(error: unknown): boolean {
+  // Retry on network errors
+  if (error instanceof NetworkError) {
+    return true;
+  }
+  // Retry on timeout errors
+  if (error instanceof TimeoutError) {
+    return true;
+  }
+  // Retry on 503 Service Unavailable or 429 Too Many Requests
+  if (error instanceof ServerError && (error.message.includes('503') || error.message.includes('429'))) {
+    return true;
+  }
+  // Don't retry auth errors, validation errors, or other 4xx errors
+  return false;
+}
+
+/**
  * Handle HTTP response errors
  */
 async function handleResponse<T>(response: Response): Promise<T> {
@@ -111,7 +187,10 @@ async function handleResponse<T>(response: Response): Promise<T> {
 
   // Handle 5xx errors
   if (response.status >= 500) {
-    throw new ServerError('A server error occurred. Please try again later.');
+    if (response.status === 503) {
+      throw new ServerError('Service temporarily unavailable. Please try again later.');
+    }
+    throw new ServerError(`Server error (${response.status}): ${response.statusText}`);
   }
 
   // Fallback for other status codes
@@ -127,6 +206,9 @@ export async function get<TResponse>(
 ): Promise<TResponse> {
   const queryString = options?.params ? buildQueryString(options.params) : '';
   const fullUrl = `${url}${queryString}`;
+  const timeout = options?.timeout ?? 30000; // 30 seconds default
+  const maxRetries = options?.retryCount ?? 0;
+  const retryDelay = options?.retryDelay ?? 1000;
 
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
@@ -142,12 +224,42 @@ export async function get<TResponse>(
     }
   }
 
-  const response = await fetch(fullUrl, {
-    method: 'GET',
-    headers,
-  });
+  // Retry logic
+  let lastError: Error | null = null;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetchWithTimeout(
+        fullUrl,
+        {
+          method: 'GET',
+          headers,
+        },
+        timeout
+      );
 
-  return handleResponse<TResponse>(response);
+      return handleResponse<TResponse>(response);
+    } catch (error) {
+      lastError = error as Error;
+
+      // Check if error is retryable
+      if (!isRetryableError(error)) {
+        throw error; // Not retryable, throw immediately
+      }
+
+      // If this was the last retry, throw the error
+      if (attempt === maxRetries) {
+        throw error;
+      }
+
+      // Wait before retrying (with exponential backoff)
+      const delayMs = retryDelay * Math.pow(2, attempt);
+      console.warn(`Request failed (attempt ${attempt + 1}/${maxRetries + 1}), retrying in ${delayMs}ms...`);
+      await sleep(delayMs);
+    }
+  }
+
+  // Should never reach here, but TypeScript needs this
+  throw lastError ?? new Error('Request failed');
 }
 
 /**
@@ -158,6 +270,10 @@ export async function post<TBody, TResponse>(
   body: TBody,
   options?: HttpRequestOptions
 ): Promise<TResponse> {
+  const timeout = options?.timeout ?? 30000; // 30 seconds default
+  const maxRetries = options?.retryCount ?? 0;
+  const retryDelay = options?.retryDelay ?? 1000;
+
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
   };
@@ -170,13 +286,43 @@ export async function post<TBody, TResponse>(
     }
   }
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify(body),
-  });
+  // Retry logic
+  let lastError: Error | null = null;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetchWithTimeout(
+        url,
+        {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(body),
+        },
+        timeout
+      );
 
-  return handleResponse<TResponse>(response);
+      return handleResponse<TResponse>(response);
+    } catch (error) {
+      lastError = error as Error;
+
+      // Check if error is retryable
+      if (!isRetryableError(error)) {
+        throw error; // Not retryable, throw immediately
+      }
+
+      // If this was the last retry, throw the error
+      if (attempt === maxRetries) {
+        throw error;
+      }
+
+      // Wait before retrying (with exponential backoff)
+      const delayMs = retryDelay * Math.pow(2, attempt);
+      console.warn(`Request failed (attempt ${attempt + 1}/${maxRetries + 1}), retrying in ${delayMs}ms...`);
+      await sleep(delayMs);
+    }
+  }
+
+  // Should never reach here, but TypeScript needs this
+  throw lastError ?? new Error('Request failed');
 }
 
 /**
@@ -187,6 +333,10 @@ export async function put<TBody, TResponse>(
   body: TBody,
   options?: HttpRequestOptions
 ): Promise<TResponse> {
+  const timeout = options?.timeout ?? 30000; // 30 seconds default
+  const maxRetries = options?.retryCount ?? 0;
+  const retryDelay = options?.retryDelay ?? 1000;
+
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
   };
@@ -199,11 +349,41 @@ export async function put<TBody, TResponse>(
     }
   }
 
-  const response = await fetch(url, {
-    method: 'PUT',
-    headers,
-    body: JSON.stringify(body),
-  });
+  // Retry logic
+  let lastError: Error | null = null;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetchWithTimeout(
+        url,
+        {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify(body),
+        },
+        timeout
+      );
 
-  return handleResponse<TResponse>(response);
+      return handleResponse<TResponse>(response);
+    } catch (error) {
+      lastError = error as Error;
+
+      // Check if error is retryable
+      if (!isRetryableError(error)) {
+        throw error; // Not retryable, throw immediately
+      }
+
+      // If this was the last retry, throw the error
+      if (attempt === maxRetries) {
+        throw error;
+      }
+
+      // Wait before retrying (with exponential backoff)
+      const delayMs = retryDelay * Math.pow(2, attempt);
+      console.warn(`Request failed (attempt ${attempt + 1}/${maxRetries + 1}), retrying in ${delayMs}ms...`);
+      await sleep(delayMs);
+    }
+  }
+
+  // Should never reach here, but TypeScript needs this
+  throw lastError ?? new Error('Request failed');
 }

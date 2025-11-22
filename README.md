@@ -90,6 +90,54 @@ npm run lint
 npm run format
 ```
 
+### Testing
+
+**Run all unit tests:**
+```bash
+npm test
+```
+
+**Watch mode (for development):**
+```bash
+npm run test:watch
+```
+
+**Test with coverage report:**
+```bash
+npm run test:coverage
+```
+
+**Interactive test UI:**
+```bash
+npm run test:ui
+```
+
+**End-to-end tests:**
+```bash
+npm run test:e2e
+```
+
+**E2E tests with UI:**
+```bash
+npm run test:e2e:ui
+```
+
+**E2E tests in headed mode (see browser):**
+```bash
+npm run test:e2e:headed
+```
+
+**Debug E2E tests:**
+```bash
+npm run test:e2e:debug
+```
+
+**Test Coverage:**
+- Current coverage: 73%+ overall
+- Target: 80% overall coverage
+- Critical utilities: 90%+ coverage
+- See `coverage/` directory after running `npm run test:coverage`
+
 ## Project Structure
 
 ```
