@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useCallback, memo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getOrder } from '../../api/shoppingCartApi';
 import { formatCurrency, formatDate } from '../../utils/formatters';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ErrorMessage from '../../components/common/ErrorMessage';
+import Button from '../../components/common/Button';
 import type { Order } from '../../types/Orders';
 
-export default function OrderDetailPage() {
+const OrderDetailPage = memo(function OrderDetailPage() {
   const { orderId } = useParams<{ orderId: string }>();
   const navigate = useNavigate();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const loadOrder = async () => {
+  const loadOrder = useCallback(async () => {
       if (!orderId) {
         setError('Order ID is required');
         setLoading(false);
@@ -32,13 +32,26 @@ export default function OrderDetailPage() {
       } finally {
         setLoading(false);
       }
-    };
-
-    loadOrder();
   }, [orderId]);
 
+  useEffect(() => {
+    loadOrder();
+  }, [loadOrder]);
+
+  const handleBackToOrders = useCallback(() => {
+    navigate('/account/orders');
+  }, [navigate]);
+
+  const subtotal = useMemo(() => {
+    return order?.items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0) ?? 0;
+  }, [order?.items]);
+
   if (loading) {
-    return <LoadingSpinner />;
+    return (
+      <div className="flex justify-center items-center min-h-[400px]">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   if (error) {
@@ -46,9 +59,9 @@ export default function OrderDetailPage() {
       <div className="max-w-4xl mx-auto">
         <ErrorMessage message={error} />
         <div className="mt-4">
-          <button onClick={() => navigate('/account/orders')} className="btn-secondary">
+          <Button onClick={handleBackToOrders} variant="secondary">
             Back to Orders
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -59,22 +72,20 @@ export default function OrderDetailPage() {
       <div className="max-w-4xl mx-auto text-center">
         <p className="text-gray-600">Order not found</p>
         <div className="mt-4">
-          <button onClick={() => navigate('/account/orders')} className="btn-secondary">
+          <Button onClick={handleBackToOrders} variant="secondary">
             Back to Orders
-          </button>
+          </Button>
         </div>
       </div>
     );
   }
-
-  const subtotal = order.items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
 
   return (
     <div className="max-w-4xl mx-auto">
       {/* Header */}
       <div className="mb-6">
         <button
-          onClick={() => navigate('/account/orders')}
+          onClick={handleBackToOrders}
           className="text-blue-600 hover:text-blue-800 mb-4 inline-flex items-center"
         >
           ← Back to Orders
@@ -155,4 +166,8 @@ export default function OrderDetailPage() {
       </div>
     </div>
   );
-}
+});
+
+OrderDetailPage.displayName = 'OrderDetailPage';
+
+export default OrderDetailPage;

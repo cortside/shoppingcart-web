@@ -179,9 +179,14 @@ export const ProfileEdit = memo(function ProfileEdit({ customer, onSave, onCance
                 }`}
                 disabled={submitting}
                 required
+                aria-required="true"
+                aria-invalid={!!errors.firstName}
+                aria-describedby={errors.firstName ? 'firstName-error' : undefined}
               />
               {errors.firstName && (
-                <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>
+                <p id="firstName-error" className="mt-1 text-sm text-red-600" role="alert">
+                  {errors.firstName}
+                </p>
               )}
             </div>
 
@@ -201,9 +206,14 @@ export const ProfileEdit = memo(function ProfileEdit({ customer, onSave, onCance
                 }`}
                 disabled={submitting}
                 required
+                aria-required="true"
+                aria-invalid={!!errors.lastName}
+                aria-describedby={errors.lastName ? 'lastName-error' : undefined}
               />
               {errors.lastName && (
-                <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>
+                <p id="lastName-error" className="mt-1 text-sm text-red-600" role="alert">
+                  {errors.lastName}
+                </p>
               )}
             </div>
 
@@ -223,9 +233,14 @@ export const ProfileEdit = memo(function ProfileEdit({ customer, onSave, onCance
                 }`}
                 disabled={submitting}
                 required
+                aria-required="true"
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? 'email-error' : undefined}
               />
               {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                <p id="email-error" className="mt-1 text-sm text-red-600" role="alert">
+                  {errors.email}
+                </p>
               )}
             </div>
 
@@ -245,9 +260,14 @@ export const ProfileEdit = memo(function ProfileEdit({ customer, onSave, onCance
                 }`}
                 disabled={submitting}
                 required
+                aria-required="true"
+                aria-invalid={!!errors.birthDate}
+                aria-describedby={errors.birthDate ? 'birthDate-error' : undefined}
               />
               {errors.birthDate && (
-                <p className="mt-1 text-sm text-red-600">{errors.birthDate}</p>
+                <p id="birthDate-error" className="mt-1 text-sm text-red-600" role="alert">
+                  {errors.birthDate}
+                </p>
               )}
             </div>
           </div>

@@ -26,7 +26,7 @@ export default function ProfilePage() {
   const { customerResourceId } = useAuth();
 
   // Ref for success message timeout cleanup
-  const successTimeoutRef = useRef<number | null>(null);
+  const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // State
   const [customer, setCustomer] = useState<Customer | null>(null);
