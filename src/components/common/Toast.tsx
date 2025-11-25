@@ -4,6 +4,7 @@
  */
 
 import { useEffect } from 'react';
+import { TOAST_DURATION } from '../../constants/ui';
 
 interface ToastProps {
   readonly message: string;
@@ -12,7 +13,12 @@ interface ToastProps {
   readonly duration?: number;
 }
 
-export default function Toast({ message, type = 'success', onClose, duration = 3000 }: ToastProps) {
+export default function Toast({
+  message,
+  type = 'success',
+  onClose,
+  duration = TOAST_DURATION.DEFAULT,
+}: ToastProps) {
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose();

@@ -1,10 +1,15 @@
 /**
- * CartItem component
- * Displays a single cart item with quantity controls and remove button
+ * CartItem Component
+ * Displays a single cart item with quantity controls and remove button.
+ * Used in shopping cart list - memoized to prevent unnecessary re-renders.
  * Per Phase 4 Plan and FR-007 through FR-011
+ *
+ * @param item - Cart item data
+ * @param onUpdateQuantity - Callback to update item quantity
+ * @param onRemove - Callback to remove item from cart
  */
 
-import { useCallback } from 'react';
+import { memo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import type { CartItem as CartItemType } from '../../../types/Cart';
 import QuantitySelector from '../../ProductDetail/components/QuantitySelector';
@@ -15,7 +20,7 @@ interface CartItemProps {
   readonly onRemove: (sku: string) => void;
 }
 
-export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemProps) {
+export const CartItem = memo(function CartItem({ item, onUpdateQuantity, onRemove }: CartItemProps) {
   const itemTotal = item.unitPrice * item.quantity;
 
   const handleQuantityChange = useCallback((newQuantity: number) => {
@@ -111,4 +116,8 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }: CartItemP
       </div>
     </div>
   );
-}
+});
+
+CartItem.displayName = 'CartItem';
+
+export default CartItem;
