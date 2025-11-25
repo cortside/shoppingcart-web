@@ -1,4 +1,6 @@
 
+please review the documentation in /docs. review for completeness and understandability from the perspective of being able to create implemenation plans and ultimately generate code when the time comes.
+
 I'll scan the docs folder files to assess coverage and clarity for implementation planning.
 
 Read README.md
