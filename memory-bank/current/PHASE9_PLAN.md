@@ -234,7 +234,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Checkout Flow - New Customer', () => {
   test('should complete checkout for new customer', async ({ page }) => {
     // 1. Browse catalog
-    await page.goto('http://localhost:3000/catalog');
+    await page.goto('http://localhost:5173/catalog');
     
     // 2. Add item to cart
     await page.click('text=Premium Widget');

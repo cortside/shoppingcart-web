@@ -26,7 +26,7 @@ describe('oidcClient', () => {
   beforeEach(() => {
     originalLocation = globalThis.location;
     mockLocation = {
-      origin: 'http://localhost:3000',
+      origin: 'http://localhost:5173',
       href: '',
       hash: '',
       pathname: '/catalog',

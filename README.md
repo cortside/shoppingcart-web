@@ -24,10 +24,7 @@ This application provides customers with an intuitive online shopping experience
 ## Prerequisites
 
 - **Node.js** 18+ and npm
-- **Backend Services** (must be running):
-  - Catalog API - `http://localhost:5001`
-  - ShoppingCart API - `http://localhost:5000`
-  - Identity Server - `http://localhost:5002`
+- **Backend Services**: Application is configured to use hosted services at cortside.net. For local development, override in `public/config.local.json` (see Configuration section below).
 
 ## Getting Started
 
@@ -39,10 +36,21 @@ npm install
 
 ### Configuration
 
-The application uses `public/config.json` for base configuration. To override settings locally:
+The application uses `public/config.json` for base configuration, which points to hosted services:
 
-1. Create `public/config.local.json` (git-ignored)
-2. Add your local overrides:
+```json
+{
+  "catalogApi": { "url": "https://mockserver.cortside.net" },
+  "shoppingCartApi": { "url": "https://shoppingcartapi.cortside.net" },
+  "identity": {
+    "authority": "https://identityserver.cortside.net",
+    "clientId": "shoppingcart-web",
+    "scope": "openid profile shoppingcart-api catalog-api"
+  }
+}
+```
+
+**For Local Development**: To use local backend services, create `public/config.local.json` (git-ignored):
 
 ```json
 {

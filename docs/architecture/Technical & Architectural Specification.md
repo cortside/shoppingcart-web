@@ -693,20 +693,40 @@ flowchart LR
 
 ## 12. Environment & Configuration
 
-### 12.1 Default Service Ports
+### 12.1 Service Endpoints
 
+**Production/Hosted Services** (configured in `public/config.json`):
+- **Catalog API**: https://mockserver.cortside.net
+- **ShoppingCart API**: https://shoppingcartapi.cortside.net
+- **Identity Server**: https://identityserver.cortside.net
+- **Dev Server**: http://localhost:5173 (Vite default)
+
+**Local Development Ports** (override in `public/config.local.json`):
 - **Catalog API**: http://localhost:5001
 - **ShoppingCart API**: http://localhost:5000
 - **Identity Server**: http://localhost:5002
-- **Dev Server**: http://localhost:3000 (typical React default)
 
 ### 12.2 Configuration File Strategy
 
-**Development Setup**:
-- `config.json` - Base configuration (committed to version control)
-- `config.local.json` - Local overrides (git-ignored, optional but recommended)
+**Configuration Files**:
+- `config.json` - Base configuration pointing to hosted services (committed to version control)
+- `config.local.json` - Local development overrides (git-ignored, optional)
 
-Example `config.json`:
+**Production `config.json`** (committed):
+
+```json
+{
+  "catalogApi": { "url": "https://mockserver.cortside.net" },
+  "shoppingCartApi": { "url": "https://shoppingcartapi.cortside.net" },
+  "identity": {
+    "authority": "https://identityserver.cortside.net",
+    "clientId": "shoppingcart-web",
+    "scope": "openid profile shoppingcart-api catalog-api"
+  }
+}
+```
+
+**Local Development `config.local.json`** (git-ignored):
 
 ```json
 {

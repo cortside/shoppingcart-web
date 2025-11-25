@@ -60,8 +60,8 @@ Per Technical Specification Section 6.1:
 **Configuration:**
 - Authority: `http://localhost:5002` (from config)
 - Client ID: `shoppingcart-web` (from config)
-- Redirect URI: `http://localhost:3000/auth/callback`
-- Post Logout Redirect URI: `http://localhost:3000`
+- Redirect URI: `http://localhost:5173/auth/callback`
+- Post Logout Redirect URI: `http://localhost:5173`
 - Scope: `openid profile shoppingcart-api catalog-api`
 - Response Type: `id_token token`
 
