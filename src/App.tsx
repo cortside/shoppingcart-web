@@ -14,13 +14,6 @@ function App() {
       <AuthProvider>
         <CartProvider>
           <BrowserRouter>
-            {/* Skip navigation for keyboard users */}
-            <a
-              href="#main-content"
-              className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-blue-600 focus:text-white focus:top-0 focus:left-0"
-            >
-              Skip to main content
-            </a>
             <div className="min-h-screen flex flex-col">
               <Header />
               <Main>

@@ -213,6 +213,34 @@ describe('Header', () => {
         expect(screen.queryByRole('menu')).not.toBeInTheDocument();
       });
     });
+
+    it('should open dropdown when pressing Enter', async () => {
+      renderHeader({ isAuthenticated: true });
+
+      const userButton = screen.getByText('John Doe').closest('button');
+      fireEvent.keyDown(userButton!, { key: 'Enter' });
+
+      await waitFor(() => {
+        expect(screen.getByRole('menu')).toBeInTheDocument();
+      });
+    });
+
+    it('should toggle dropdown when pressing Space', async () => {
+      renderHeader({ isAuthenticated: true });
+
+      const userButton = screen.getByText('John Doe').closest('button');
+      fireEvent.keyDown(userButton!, { key: ' ' });
+
+      await waitFor(() => {
+        expect(screen.getByRole('menu')).toBeInTheDocument();
+      });
+
+      fireEvent.keyDown(userButton!, { key: ' ' });
+
+      await waitFor(() => {
+        expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+      });
+    });
   });
 
   describe('Accessibility', () => {

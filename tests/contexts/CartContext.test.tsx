@@ -43,27 +43,27 @@ const sampleItem1: CatalogItem = {
   itemId: '1',
   sku: 'WIDGET-001',
   name: 'Test Widget',
-  description: 'A test widget',
   unitPrice: 19.99,
   imageUrl: 'https://example.com/widget.jpg',
+  status: 'active',
 };
 
 const sampleItem2: CatalogItem = {
   itemId: '2',
   sku: 'GADGET-002',
   name: 'Test Gadget',
-  description: 'A test gadget',
   unitPrice: 29.99,
   imageUrl: 'https://example.com/gadget.jpg',
+  status: 'active',
 };
 
 const sampleItem3: CatalogItem = {
   itemId: '3',
   sku: 'TOOL-003',
   name: 'Test Tool',
-  description: 'A test tool',
   unitPrice: 39.99,
   imageUrl: 'https://example.com/tool.jpg',
+  status: 'active',
 };
 
 describe('CartContext', () => {
@@ -537,9 +537,9 @@ describe('CartContext', () => {
         itemId: '4',
         sku: 'DECIMAL-004',
         name: 'Decimal Test',
-        description: 'Test decimal pricing',
         unitPrice: 0.99,
         imageUrl: 'https://example.com/decimal.jpg',
+        status: 'active',
       };
 
       const { result } = renderHook(() => useCart(), {

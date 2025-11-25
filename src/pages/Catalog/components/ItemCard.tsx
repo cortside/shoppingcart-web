@@ -16,6 +16,7 @@ const ItemCard = memo(function ItemCard({ item }: ItemCardProps) {
     <Link
       to={`/product/${item.sku}`}
       className="group block bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+      data-testid="item-card"
     >
       <div className="aspect-square overflow-hidden bg-gray-100">
         <img

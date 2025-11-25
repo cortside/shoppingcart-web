@@ -51,6 +51,14 @@ export default function CheckoutPage() {
     saveCheckoutData(customerInfo, shippingAddress);
   }, [customerInfo, shippingAddress]);
 
+  // Focus management - focus first input when step changes
+  useEffect(() => {
+    const firstInput = document.querySelector('input:not([type="hidden"])');
+    if (firstInput instanceof HTMLElement) {
+      firstInput.focus();
+    }
+  }, [currentStep]);
+
   // Redirect to cart if empty - must be in useEffect to avoid render-time navigation
   useEffect(() => {
     if (items.length === 0) {

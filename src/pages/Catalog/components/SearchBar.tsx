@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { CATALOG_CONFIG } from '../../../constants/catalog';
 
 interface SearchBarProps {
   readonly value: string;
@@ -20,7 +21,7 @@ export default function SearchBar({ value, onChange, placeholder = 'Search by na
   useEffect(() => {
     const timer = setTimeout(() => {
       onChange(localValue);
-    }, 300);
+    }, CATALOG_CONFIG.SEARCH_DEBOUNCE_DELAY);
 
     return () => clearTimeout(timer);
   }, [localValue, onChange]);

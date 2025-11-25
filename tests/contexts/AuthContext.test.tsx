@@ -9,7 +9,7 @@ import * as oidcClient from '../../src/auth/oidcClient';
 import type { AuthUser } from '../../src/types/Auth';
 
 // Helper to create a mock JWT token with far-future expiration
-function createMockJWT(payload: Record<string, any> = {}): string {
+function createMockJWT(payload: Record<string, unknown> = {}): string {
   const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
   const farFuture = Math.floor(Date.now() / 1000) + 86400; // 24 hours from now
   const payloadStr = btoa(JSON.stringify({ exp: farFuture, ...payload }));
