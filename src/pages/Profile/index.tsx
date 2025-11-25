@@ -13,10 +13,6 @@ import ProfileEdit from './components/ProfileEdit';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import Button from '../../components/common/Button';
-
-// Constants
-import { validateEmail } from '../../utils/validation';
-import { useAuth } from '../../contexts/AuthContext';
 import { TOAST_DURATION } from '../../constants/ui';
 
 const SUCCESS_MESSAGE_DURATION = TOAST_DURATION.DEFAULT;

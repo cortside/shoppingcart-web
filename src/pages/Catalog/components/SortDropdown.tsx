@@ -1,14 +1,20 @@
 /**
- * SortDropdown component
- * Dropdown for sorting catalog items
+ * SortDropdown Component
+ * Dropdown for sorting catalog items.
+ * Memoized to prevent re-renders when parent re-renders but props haven't changed.
+ *
+ * @param value - Current sort value
+ * @param onChange - Callback when sort value changes (MUST be memoized with useCallback)
  */
+
+import { memo } from 'react';
 
 interface SortDropdownProps {
   readonly value: string;
   readonly onChange: (value: string) => void;
 }
 
-export default function SortDropdown({ value, onChange }: SortDropdownProps) {
+export const SortDropdown = memo(function SortDropdown({ value, onChange }: SortDropdownProps) {
   const sortOptions = [
     { value: 'name', label: 'Name: A to Z' },
     { value: 'name desc', label: 'Name: Z to A' },
@@ -36,4 +42,8 @@ export default function SortDropdown({ value, onChange }: SortDropdownProps) {
       </select>
     </div>
   );
-}
+});
+
+SortDropdown.displayName = 'SortDropdown';
+
+export default SortDropdown;

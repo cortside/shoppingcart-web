@@ -1,11 +1,14 @@
 /**
- * SearchBar component
- * Search input with debounced onChange
+ * SearchBar Component
+ * Search input with debounced onChange.
+ * Memoized to prevent re-renders when parent re-renders but props haven't changed.
  *
- * @param onChange - MUST be memoized with useCallback to prevent unnecessary re-renders
+ * @param value - Current search value
+ * @param onChange - Callback when search value changes (MUST be memoized with useCallback)
+ * @param placeholder - Placeholder text for the input
  */
 
-import { useState, useEffect } from 'react';
+import { memo, useState, useEffect } from 'react';
 import { CATALOG_CONFIG } from '../../../constants/catalog';
 
 interface SearchBarProps {
@@ -14,7 +17,7 @@ interface SearchBarProps {
   readonly placeholder?: string;
 }
 
-export default function SearchBar({ value, onChange, placeholder = 'Search by name or SKU...' }: SearchBarProps) {
+export const SearchBar = memo(function SearchBar({ value, onChange, placeholder = 'Search by name or SKU...' }: SearchBarProps) {
   const [localValue, setLocalValue] = useState(value);
 
   // Debounce the search input
@@ -58,4 +61,8 @@ export default function SearchBar({ value, onChange, placeholder = 'Search by na
       />
     </div>
   );
-}
+});
+
+SearchBar.displayName = 'SearchBar';
+
+export default SearchBar;
