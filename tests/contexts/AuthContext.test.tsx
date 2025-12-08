@@ -70,6 +70,9 @@ describe('AuthContext', () => {
     });
 
     it('should handle corrupted session storage gracefully', () => {
+      // Suppress expected console.error (will be called multiple times during state initialization)
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
       sessionStorageMock['auth_state'] = 'invalid json';
 
       const { result } = renderHook(() => useAuth(), {
@@ -77,6 +80,8 @@ describe('AuthContext', () => {
       });
 
       expect(result.current.isAuthenticated).toBe(false);
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
     });
   });
 
