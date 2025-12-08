@@ -14,7 +14,7 @@ This document provides an overview of all development phases for the ShoppingCar
 | Phase 2 | ✅ Completed | Core Infrastructure | [docs/completed/](../../docs/completed/PHASE2_PLAN.md) |
 | Phase 3 | ✅ Completed | Public Pages (Catalog & Product Detail) | [docs/completed/](../../docs/completed/PHASE3_PLAN.md) |
 | Phase 4 | ✅ Completed | Cart Page | [docs/completed/](../../docs/completed/PHASE4_PLAN.md) |
-| Phase 5 | 📋 Planning | Authentication & Protected Routes | [PHASE5_PLAN.md](./PHASE5_PLAN.md) |
+| Phase 5 | ✅ Completed | Authentication & Protected Routes | [docs/completed/](../../docs/completed/PHASE5_PLAN.md) |
 | Phase 6 | 📋 Planning | Checkout Flow | [PHASE6_PLAN.md](./PHASE6_PLAN.md) |
 | Phase 7 | 📋 Planning | Order History | [PHASE7_PLAN.md](./PHASE7_PLAN.md) |
 | Phase 8 | 📋 Planning | User Profile Management | [PHASE8_PLAN.md](./PHASE8_PLAN.md) |
@@ -96,10 +96,10 @@ Implement the shopping cart page where users can view cart contents, update quan
 
 ---
 
-### Phase 5: Authentication & Protected Routes 📋
+### Phase 5: Authentication & Protected Routes ✅
 
-**Status:** Planning  
-**Document:** [PHASE5_PLAN.md](./PHASE5_PLAN.md)
+**Status:** Completed  
+**Document:** [PHASE5_PLAN.md](../../docs/completed/PHASE5_PLAN.md)
 
 Implement OpenID Connect authentication with IdentityServer, protect routes that require authentication, and ensure proper redirect flow after login.
 
@@ -112,6 +112,8 @@ Implement OpenID Connect authentication with IdentityServer, protect routes that
 - Logout functionality
 - Header updates to show auth state
 - Redirect-back-to-origin after login
+- Comprehensive test suite (54 tests)
+- Accessibility improvements
 
 ---
 

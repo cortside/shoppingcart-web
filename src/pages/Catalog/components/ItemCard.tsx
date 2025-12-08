@@ -3,6 +3,7 @@
  * Display catalog item with image, name, SKU, and price
  */
 
+import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import type { CatalogItem } from '../../../types/Catalog';
 
@@ -10,7 +11,7 @@ interface ItemCardProps {
   readonly item: CatalogItem;
 }
 
-export default function ItemCard({ item }: ItemCardProps) {
+const ItemCard = memo(function ItemCard({ item }: ItemCardProps) {
   return (
     <Link
       to={`/product/${item.sku}`}
@@ -31,4 +32,6 @@ export default function ItemCard({ item }: ItemCardProps) {
       </div>
     </Link>
   );
-}
+});
+
+export default ItemCard;

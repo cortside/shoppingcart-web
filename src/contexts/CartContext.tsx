@@ -3,7 +3,7 @@
  * Per Technical Specification Sections 7.2-7.3
  */
 
-import { createContext, useContext, useState, useEffect, useMemo, type ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useCallback, type ReactNode } from 'react';
 import type { CartItem } from '../types/Cart';
 import type { CatalogItem } from '../types/Catalog';
 import { loadCart, saveCart, clearCart as clearStoredCart } from '../utils/storage';
@@ -48,7 +48,7 @@ export function CartProvider({ children }: CartProviderProps) {
   /**
    * Add item to cart or update quantity if already exists
    */
-  const addItem = (item: CatalogItem, quantity: number) => {
+  const addItem = useCallback((item: CatalogItem, quantity: number) => {
     setItems((currentItems) => {
       const existingItemIndex = currentItems.findIndex((i) => i.sku === item.sku);
 
@@ -73,15 +73,16 @@ export function CartProvider({ children }: CartProviderProps) {
         return [...currentItems, newItem];
       }
     });
-  };
+  }, []);
 
   /**
    * Update quantity of an item in cart
    * If quantity is 0 or less, remove the item
    */
-  const updateQuantity = (sku: string, quantity: number) => {
+  const updateQuantity = useCallback((sku: string, quantity: number) => {
     if (quantity <= 0) {
-      removeItem(sku);
+      // Inline removal logic to avoid circular dependency
+      setItems((currentItems) => currentItems.filter((item) => item.sku !== sku));
       return;
     }
 
@@ -90,22 +91,22 @@ export function CartProvider({ children }: CartProviderProps) {
         item.sku === sku ? { ...item, quantity } : item
       )
     );
-  };
+  }, []);
 
   /**
    * Remove item from cart
    */
-  const removeItem = (sku: string) => {
+  const removeItem = useCallback((sku: string) => {
     setItems((currentItems) => currentItems.filter((item) => item.sku !== sku));
-  };
+  }, []);
 
   /**
    * Clear all items from cart
    */
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     setItems([]);
     clearStoredCart();
-  };
+  }, []);
 
   // Calculate derived values
   const itemCount = useMemo(
@@ -128,8 +129,7 @@ export function CartProvider({ children }: CartProviderProps) {
       removeItem,
       clearCart,
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [items, itemCount, subtotal]
+    [items, itemCount, subtotal, addItem, updateQuantity, removeItem, clearCart]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
