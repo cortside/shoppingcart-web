@@ -1,4 +1,6 @@
 import { vi, beforeAll, afterEach, afterAll } from 'vitest';
+import { cleanup } from '@testing-library/react';
+import '@testing-library/jest-dom/vitest';
 import { server } from './mocks/server';
 
 // Mock configuration to avoid network calls during tests
@@ -7,7 +9,7 @@ vi.mock('@/utils/config', () => ({
   loadConfig: vi.fn().mockResolvedValue(undefined),
   getConfig: vi.fn().mockReturnValue({
     catalogApi: {
-      url: 'https://mockserver.cortside.net/api/v1',
+      url: 'https://mockserver.cortside.net',
     },
     shoppingCartApi: {
       url: 'http://localhost:5000',
@@ -29,6 +31,8 @@ beforeAll(() => {
 afterEach(() => {
   // Reset handlers after each test to ensure test isolation
   server.resetHandlers();
+  // Cleanup React Testing Library
+  cleanup();
 });
 
 afterAll(() => {

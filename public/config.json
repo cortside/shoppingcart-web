@@ -1,8 +1,8 @@
 {
-  "catalogApi": { "url": "http://localhost:5001" },
-  "shoppingCartApi": { "url": "http://localhost:5000" },
+  "catalogApi": { "url": "https://mockserver.cortside.net" },
+  "shoppingCartApi": { "url": "https://shoppingcartapi.cortside.net" },
   "identity": {
-    "authority": "http://localhost:5002",
+    "authority": "https://identity.cortside.net",
     "clientId": "shoppingcart-web",
     "scope": "openid profile shoppingcart-api catalog-api"
   }
