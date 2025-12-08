@@ -1,9 +1,18 @@
 /**
- * Button component
- * Primary/secondary button styles with loading state support
+ * Button Component
+ * Reusable button with primary/secondary variants and loading state support.
+ * Memoized to prevent re-renders when parent components update.
+ *
+ * @param children - Button content
+ * @param onClick - Click handler
+ * @param type - HTML button type
+ * @param variant - Visual style ('primary' | 'secondary')
+ * @param disabled - Disables the button
+ * @param loading - Shows loading spinner when true
+ * @param className - Additional CSS classes
  */
 
-import { type ReactNode } from 'react';
+import { memo, type ReactNode } from 'react';
 
 interface ButtonProps {
   readonly children: ReactNode;
@@ -15,7 +24,7 @@ interface ButtonProps {
   readonly className?: string;
 }
 
-export default function Button({
+export const Button = memo(function Button({
   children,
   onClick,
   type = 'button',
@@ -70,4 +79,8 @@ export default function Button({
       )}
     </button>
   );
-}
+});
+
+Button.displayName = 'Button';
+
+export default Button;

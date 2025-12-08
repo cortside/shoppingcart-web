@@ -58,9 +58,11 @@ From Technical Specification:
 ## Backend API Integration
 
 ### Service Endpoints (Section 12.1)
-- **Catalog API**: `http://localhost:5001` (public, no auth)
-- **ShoppingCart API**: `http://localhost:5000` (requires auth)
-- **Identity Server**: `http://localhost:5002` (OIDC provider)
+- **Catalog API**: `https://mockserver.cortside.net` (configured in `public/config.json`, public, no auth)
+- **ShoppingCart API**: `https://shoppingcartapi.cortside.net` (configured in `public/config.json`, requires auth)
+- **Identity Server**: `https://identityserver.cortside.net` (configured in `public/config.json`, OIDC provider)
+
+**Note**: For local development, override these URLs in `public/config.local.json` to point to local services (e.g., `http://localhost:5000` for ShoppingCart API).
 
 ### Key API Contracts (Section 5)
 - `GET /items` - List catalog with pagination, search, sort

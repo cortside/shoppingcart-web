@@ -13,9 +13,9 @@ import ProfileEdit from './components/ProfileEdit';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import Button from '../../components/common/Button';
+import { TOAST_DURATION } from '../../constants/ui';
 
-// Constants
-const SUCCESS_MESSAGE_DURATION = 3000; // 3 seconds
+const SUCCESS_MESSAGE_DURATION = TOAST_DURATION.DEFAULT;
 
 /**
  * Profile Page Component

@@ -428,7 +428,7 @@ docker run -p 3000:80 \
   shoppingcart-web:latest
 ```
 
-Access the app at: http://localhost:3000
+Access the app at: http://localhost:5173
 
 ### Full Stack (docker-compose)
 
@@ -542,7 +542,7 @@ docker logs <container-id>
 
 Test manually:
 ```bash
-curl http://localhost:3000/health
+curl http://localhost:5173/health
 ```
 
 Should return `OK`.

@@ -1,14 +1,20 @@
 /**
- * ErrorMessage component
- * Styled error display with optional retry action
+ * ErrorMessage Component
+ * Styled error display with optional retry action.
+ * Memoized to prevent re-renders when parent error state doesn't change.
+ *
+ * @param message - Error message to display
+ * @param onRetry - Optional callback to retry the failed operation
  */
+
+import { memo } from 'react';
 
 interface ErrorMessageProps {
   readonly message: string;
   readonly onRetry?: () => void;
 }
 
-export default function ErrorMessage({ message, onRetry }: ErrorMessageProps) {
+export const ErrorMessage = memo(function ErrorMessage({ message, onRetry }: ErrorMessageProps) {
   return (
     <div className="bg-red-50 border border-red-200 rounded-lg p-6 my-4" role="alert">
       <div className="flex items-start">
@@ -43,4 +49,8 @@ export default function ErrorMessage({ message, onRetry }: ErrorMessageProps) {
       </div>
     </div>
   );
-}
+});
+
+ErrorMessage.displayName = 'ErrorMessage';
+
+export default ErrorMessage;

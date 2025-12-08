@@ -24,10 +24,7 @@ This application provides customers with an intuitive online shopping experience
 ## Prerequisites
 
 - **Node.js** 18+ and npm
-- **Backend Services** (must be running):
-  - Catalog API - `http://localhost:5001`
-  - ShoppingCart API - `http://localhost:5000`
-  - Identity Server - `http://localhost:5002`
+- **Backend Services**: Application is configured to use hosted services at cortside.net. For local development, override in `public/config.local.json` (see Configuration section below).
 
 ## Getting Started
 
@@ -39,10 +36,21 @@ npm install
 
 ### Configuration
 
-The application uses `public/config.json` for base configuration. To override settings locally:
+The application uses `public/config.json` for base configuration, which points to hosted services:
 
-1. Create `public/config.local.json` (git-ignored)
-2. Add your local overrides:
+```json
+{
+  "catalogApi": { "url": "https://mockserver.cortside.net" },
+  "shoppingCartApi": { "url": "https://shoppingcartapi.cortside.net" },
+  "identity": {
+    "authority": "https://identityserver.cortside.net",
+    "clientId": "shoppingcart-web",
+    "scope": "openid profile shoppingcart-api catalog-api"
+  }
+}
+```
+
+**For Local Development**: To use local backend services, create `public/config.local.json` (git-ignored):
 
 ```json
 {
@@ -89,6 +97,54 @@ npm run lint
 ```bash
 npm run format
 ```
+
+### Testing
+
+**Run all unit tests:**
+```bash
+npm test
+```
+
+**Watch mode (for development):**
+```bash
+npm run test:watch
+```
+
+**Test with coverage report:**
+```bash
+npm run test:coverage
+```
+
+**Interactive test UI:**
+```bash
+npm run test:ui
+```
+
+**End-to-end tests:**
+```bash
+npm run test:e2e
+```
+
+**E2E tests with UI:**
+```bash
+npm run test:e2e:ui
+```
+
+**E2E tests in headed mode (see browser):**
+```bash
+npm run test:e2e:headed
+```
+
+**Debug E2E tests:**
+```bash
+npm run test:e2e:debug
+```
+
+**Test Coverage:**
+- Current coverage: 73%+ overall
+- Target: 80% overall coverage
+- Critical utilities: 90%+ coverage
+- See `coverage/` directory after running `npm run test:coverage`
 
 ## Project Structure
 

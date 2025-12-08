@@ -26,7 +26,7 @@ describe('oidcClient', () => {
   beforeEach(() => {
     originalLocation = globalThis.location;
     mockLocation = {
-      origin: 'http://localhost:3000',
+      origin: 'http://localhost:5173',
       href: '',
       hash: '',
       pathname: '/catalog',
@@ -90,7 +90,7 @@ describe('oidcClient', () => {
       // URLSearchParams encodes space as + not %20
       expect(mockLocation.href).toMatch(/response_type=(id_token\+token|id_token%20token)/);
       expect(mockLocation.href).toMatch(/scope=(openid\+profile\+shoppingcart-api\+catalog-api|openid%20profile%20shoppingcart-api%20catalog-api)/);
-      expect(mockLocation.href).toContain('redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fcallback');
+      expect(mockLocation.href).toContain('redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fauth%2Fcallback');
     });
 
     it('should store return URL in session storage', () => {
@@ -183,7 +183,7 @@ describe('oidcClient', () => {
       initiateLogout(idToken);
 
       expect(mockLocation.href).toContain('http://localhost:5002/connect/endsession');
-      expect(mockLocation.href).toContain('post_logout_redirect_uri=http%3A%2F%2Flocalhost%3A3000');
+      expect(mockLocation.href).toContain('post_logout_redirect_uri=http%3A%2F%2Flocalhost%3A5173');
       expect(mockLocation.href).toContain('id_token_hint=test_id_token');
     });
 
@@ -191,7 +191,7 @@ describe('oidcClient', () => {
       initiateLogout(null);
 
       expect(mockLocation.href).toContain('http://localhost:5002/connect/endsession');
-      expect(mockLocation.href).toContain('post_logout_redirect_uri=http%3A%2F%2Flocalhost%3A3000');
+      expect(mockLocation.href).toContain('post_logout_redirect_uri=http%3A%2F%2Flocalhost%3A5173');
       expect(mockLocation.href).not.toContain('id_token_hint');
     });
 

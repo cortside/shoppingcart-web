@@ -8,6 +8,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { listItems } from '../../api/catalogApi';
 import type { CatalogItem, PagedResult } from '../../types/Catalog';
+import { CATALOG_CONFIG } from '../../constants/catalog';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import ItemCard from './components/ItemCard';
@@ -15,8 +16,6 @@ import ItemGrid from './components/ItemGrid';
 import SearchBar from './components/SearchBar';
 import SortDropdown from './components/SortDropdown';
 import Pagination from './components/Pagination';
-
-const DEFAULT_PAGE_SIZE = 12;
 
 export default function CatalogPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -38,7 +37,7 @@ export default function CatalogPage() {
       try {
         const result = await listItems({
           pageNumber,
-          pageSize: DEFAULT_PAGE_SIZE,
+          pageSize: CATALOG_CONFIG.DEFAULT_PAGE_SIZE,
           search: search || undefined,
           sort: sort || undefined,
         });
@@ -150,7 +149,7 @@ export default function CatalogPage() {
               <Pagination
                 currentPage={pageNumber}
                 totalItems={data.totalItems}
-                pageSize={DEFAULT_PAGE_SIZE}
+                pageSize={CATALOG_CONFIG.DEFAULT_PAGE_SIZE}
                 onPageChange={handlePageChange}
               />
             </>

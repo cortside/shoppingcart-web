@@ -3,6 +3,8 @@
  * Number input with +/- buttons for selecting quantity
  */
 
+import { QUANTITY_LIMITS } from '../../../constants/ui';
+
 interface QuantitySelectorProps {
   readonly value: number;
   readonly onChange: (value: number) => void;
@@ -10,7 +12,12 @@ interface QuantitySelectorProps {
   readonly max?: number;
 }
 
-export default function QuantitySelector({ value, onChange, min = 1, max = 99 }: QuantitySelectorProps) {
+export default function QuantitySelector({
+  value,
+  onChange,
+  min = QUANTITY_LIMITS.MIN,
+  max = QUANTITY_LIMITS.MAX,
+}: QuantitySelectorProps) {
   const handleDecrement = () => {
     if (value > min) {
       onChange(value - 1);

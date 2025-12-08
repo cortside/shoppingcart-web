@@ -16,7 +16,8 @@ const mockOrder: Order = {
     firstName: 'John',
     lastName: 'Doe',
     email: 'john.doe@example.com',
-    birthDate: '1990-01-15',
+    createdDate: '2024-01-01T00:00:00Z',
+    lastModifiedDate: '2024-01-01T00:00:00Z',
   },
   address: {
     street: '123 Main St',
