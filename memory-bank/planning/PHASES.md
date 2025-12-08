@@ -1,6 +1,6 @@
 # ShoppingCart Web - Development Phases
 
-**Last Updated:** November 19, 2025  
+**Last Updated:** November 20, 2025  
 **Status:** Active  
 **Owner:** Development Team
 
@@ -13,7 +13,7 @@ This document provides an overview of all development phases for the ShoppingCar
 | Phase 1 | ✅ Completed | Project Setup & Tooling | [docs/completed/](../../docs/completed/PHASE1_PLAN.md) |
 | Phase 2 | ✅ Completed | Core Infrastructure | [docs/completed/](../../docs/completed/PHASE2_PLAN.md) |
 | Phase 3 | ✅ Completed | Public Pages (Catalog & Product Detail) | [docs/completed/](../../docs/completed/PHASE3_PLAN.md) |
-| Phase 4 | 📋 Planning | Cart Page | [PHASE4_PLAN.md](./PHASE4_PLAN.md) |
+| Phase 4 | ✅ Completed | Cart Page | [docs/completed/](../../docs/completed/PHASE4_PLAN.md) |
 | Phase 5 | 📋 Planning | Authentication & Protected Routes | [PHASE5_PLAN.md](./PHASE5_PLAN.md) |
 | Phase 6 | 📋 Planning | Checkout Flow | [PHASE6_PLAN.md](./PHASE6_PLAN.md) |
 | Phase 7 | 📋 Planning | Order History | [PHASE7_PLAN.md](./PHASE7_PLAN.md) |
@@ -78,10 +78,10 @@ Implement the public-facing catalog browsing experience: the Catalog list page w
 
 ---
 
-### Phase 4: Cart Page 📋
+### Phase 4: Cart Page ✅
 
-**Status:** Planning  
-**Document:** [PHASE4_PLAN.md](./PHASE4_PLAN.md)
+**Status:** Completed  
+**Document:** [PHASE4_PLAN.md](../../docs/completed/PHASE4_PLAN.md)
 
 Implement the shopping cart page where users can view cart contents, update quantities, remove items, see the subtotal, and proceed to checkout.
 

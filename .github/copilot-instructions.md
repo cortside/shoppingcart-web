@@ -18,9 +18,12 @@
 ## Critical Prerequisites
 
 ### ALWAYS Required
+
 1. **Git Operations**: AI agents MUST NOT run git commands that modify state (add, commit, push, merge, mv, etc.). Only read-only commands allowed (status, diff, log). See `.github/instructions/workflow.instructions.md`.
 
-2. **Backend Services**: The React app requires three backend services to be running:
+2. **Phase Completion**: AI agents MUST NEVER mark a phase as complete or move files to `docs/completed/` without explicit user approval. After implementing features and tests, STOP and report to user for verification. Only proceed with completion when user explicitly commands it.
+
+3. **Backend Services**: The React app requires three backend services to be running:
    - Catalog API (port 5001)
    - ShoppingCart API (port 5000)
    - Identity Server (port 5002)
