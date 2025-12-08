@@ -8,7 +8,7 @@ excludeAgent: "code-review"
 
 **Status:** Authoritative  
 **Scope:** Universal TypeScript/JavaScript coding practices (portable to any project)  
-**Last Updated:** November 5, 2025
+**Last Updated:** November 19, 2025
 
 This document defines **HOW** to write TypeScript/JavaScript code. These standards are portable and can be used across projects.
 
@@ -18,7 +18,7 @@ This document defines **HOW** to write TypeScript/JavaScript code. These standar
 
 - **Classes:** PascalCase (`UserService.ts`, `BaseAgent.ts`, `CustomerRepository.ts`)
 - **Utilities:** camelCase (`config.ts`, `helpers.ts`, `utils.ts`, `validators.ts`)
-- **Tests:** `*.test.ts`, `*.spec.ts`, or `*.test.tsx` for React components
+- **Tests:** `*.test.ts`, `*.spec.ts`, or `*.test.tsx` for React components (in `tests/` directory)
 - **Types:** `types.ts`, `*.types.ts`, or `types/` directory
 - **Constants:** `constants.ts`, `CONSTANTS.ts`, or `config/constants.ts`
 - **React Components:** PascalCase (`Button.tsx`, `UserProfile.tsx`)
@@ -29,7 +29,7 @@ This document defines **HOW** to write TypeScript/JavaScript code. These standar
 - **Services:** `services/` for business logic
 - **Utils:** `utils/` or `lib/` for shared utilities
 - **Types:** `types/` or colocated with implementation
-- **Tests:** `__tests__/` or colocated with source files
+- **Tests:** `tests/` directory (mirrors `src/` structure)
 
 ## Code Structure
 
@@ -385,6 +385,33 @@ async function withErrorHandling() {
 ```
 
 ## Testing Patterns
+
+### ⚠️ CRITICAL: Always Create Proper Tests
+
+**AI/Copilot agents MUST create proper unit/integration tests, NOT temporary test scripts.**
+
+**Required Behavior:**
+
+1. **Create tests in the test framework** (Vitest, Jest, etc.) using `*.test.ts` or `*.spec.ts` files
+2. **Co-locate tests with source code** (e.g., `catalogApi.ts` → `catalogApi.test.ts`)
+3. **Add tests to the test suite** so they run with `npm test`
+4. **Never create ad-hoc scripts** in `.temp/` or elsewhere for validation
+
+**When validating functionality:**
+- ✅ **DO:** Create `tests/api/catalogApi.test.ts` with Vitest/Jest tests (mirrors `src/api/catalogApi.ts`)
+- ❌ **DON'T:** Create `.temp/test-catalog-api.ts` script
+
+**If you must use a temporary script for initial exploration:**
+1. Create the script in `.temp/` for quick validation
+2. **IMMEDIATELY convert it to proper unit tests** in the test framework
+3. Delete the temporary script
+4. Verify tests run with `npm test`
+
+**Rationale:**
+- Proper tests are **repeatable** and run in CI/CD
+- Temporary scripts are **forgotten** and provide no long-term value
+- Tests are **maintainable** and evolve with the codebase
+- Professional projects use **professional testing practices**
 
 ### Test Structure
 

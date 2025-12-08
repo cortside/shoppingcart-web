@@ -1,0 +1,37 @@
+/**
+ * Client-side validation utilities
+ * Per Technical Specification Section 8.2
+ */
+
+/**
+ * Validate email format (basic check)
+ */
+export function isValidEmail(email: string): boolean {
+  if (!email) return false;
+  // Basic email regex - matches most valid email formats
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+/**
+ * Validate birthdate format (YYYY-MM-DD)
+ */
+export function isValidBirthdate(date: string): boolean {
+  if (!date) return false;
+  // Check format YYYY-MM-DD
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!dateRegex.test(date)) return false;
+
+  // Verify it's a valid date and matches input exactly
+  const parsedDate = new Date(date);
+  if (Number.isNaN(parsedDate.getTime())) return false;
+  // Ensure parsed date matches input string (no silent correction)
+  return parsedDate.toISOString().slice(0, 10) === date;
+}
+
+/**
+ * Check if value is provided (not null, undefined, or empty string)
+ */
+export function isRequired(value: string | undefined | null): boolean {
+  return value !== null && value !== undefined && value.trim() !== '';
+}

@@ -280,7 +280,7 @@ Every documentation file **must** include:
 
 **Requirements:**
 
-1. **Every plan document** (e.g., `PHASE7.5_A2A_IMPLEMENTATION.md`) **MUST include a Todo List section**
+1. **Every plan document** (e.g., `PHASE7.5_PLAN.md`) **MUST include a Todo List section**
 2. **Update the document** whenever tasks are completed or status changes
 3. **Never rely solely on in-memory todo lists** managed by AI tools
 4. **Use clear status indicators**: `[ ]` not started, `[~]` in progress, `[x]` completed
@@ -321,18 +321,26 @@ When managing a todo list:
 1. **Create/Update plan document** with todo list section
 2. **Update the file** after completing each task
 3. **Show progress** by updating status indicators
-4. **Never use** `manage_todo_list` tool as sole tracking mechanism
-5. **Always commit** todo list changes to the plan document
+4. **NEVER use** `manage_todo_list` tool when a plan document exists with a todo list
+5. **ONLY use** `manage_todo_list` for ad-hoc user requests without an existing plan document
+6. **Always update** todo list changes directly in the plan document itself
 
 **Example Update Flow:**
 
 ```bash
 # After completing a task:
-1. Update status from [ ] to [x] in plan document
+1. Update status from [ ] to [~] (in-progress) or [x] (completed) in plan document
 2. Add completion notes (files created, key decisions)
 3. Update "Last Updated" date in document header
 4. Let user handle git commit (per workflow rules)
 ```
+
+**Critical: Plan Documents vs In-Memory Todos:**
+
+- ✅ **Phase plan exists?** → Update todo list in `memory-bank/current/PHASEX_PLAN.md`
+- ❌ **Don't duplicate** in `manage_todo_list` tool when plan exists
+- ✅ **No plan document?** → Use `manage_todo_list` for ad-hoc tracking only
+- ✅ **Always prefer** plan documents over in-memory tracking
 
 ## Documentation Workflow
 
@@ -358,13 +366,29 @@ Update: Mark first task as [~] in-progress
 Create: Additional notes files as needed (memory-bank/current/phaseX-notes.md)
 ```
 
-**⚠️ AI ASSISTANTS: Do NOT leave duplicate plan documents.**
+**⚠️ AI ASSISTANTS: MUST USE TERMINAL COMMANDS TO MOVE FILES**
 
-When moving a plan from `planning/` to `current/`:
-1. Read the original file from `planning/`
-2. Create the new file in `current/` with updated status
-3. Delete the original file from `planning/`
-4. This must be an atomic move operation—NEVER have both files exist simultaneously
+**CRITICAL RULE:** When moving files (e.g., from `planning/` to `current/`):
+
+1. **ALWAYS use terminal commands**: `Move-Item` (PowerShell) or `mv` (bash/zsh)
+2. **NEVER read file + create file + delete file**
+3. **This is an atomic operation** that preserves file history in git
+
+**Correct approach:**
+```powershell
+Move-Item "memory-bank/planning/PHASE2_PLAN.md" "memory-bank/current/PHASE2_PLAN.md"
+```
+
+**Then update the moved file's header:**
+- Change status from "Planning" to "Active"
+- Update "Last Updated" date
+- Mark first task as [~] in-progress
+
+**Wrong approach (DO NOT DO THIS):**
+❌ Read planning file
+❌ Create new current file
+❌ Delete planning file
+This creates a new file in git history instead of moving it!
 
 **Rationale:**
 
@@ -372,6 +396,7 @@ When moving a plan from `planning/` to `current/`:
 - ✅ Easy to see what's happening NOW (look in `current/` directory)
 - ✅ Prevents confusion about which plan is active
 - ✅ Plan evolution tracked in version control
+- ✅ Preserves git file history when using `mv`/`Move-Item`
 
 **During Implementation:**
 
@@ -386,7 +411,7 @@ Add: Decisions, blockers, solutions, lessons learned
 **3. Completion Phase:**
 
 ```
-Move: memory-bank/current/PHASEX_IMPLEMENTATION.md → docs/completed/PHASEX_IMPLEMENTATION.md
+Move: memory-bank/current/PHASEX_PLAN.md → docs/completed/PHASEX_PLAN.md
 Keep: Same filename (no renaming)
 Update: Change status to "Completed" in document header
 Do NOT: Update docs/README.md or create completion tracking lists
