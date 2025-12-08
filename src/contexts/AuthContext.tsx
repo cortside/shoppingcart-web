@@ -114,10 +114,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return stored?.customerResourceId || null;
   });
 
-  // Register token provider with httpClient
+  // Keep accessToken ref updated so token provider always returns current value
+  const accessTokenRef = useRef(accessToken);
   useEffect(() => {
-    setTokenProvider(() => accessToken);
+    accessTokenRef.current = accessToken;
   }, [accessToken]);
+
+  // Register token provider with httpClient once on mount
+  // The provider function will be called each time a token is needed,
+  // and it will read the current value from the ref
+  useEffect(() => {
+    const tokenProviderFn = () => {
+      return accessTokenRef.current;
+    };
+    setTokenProvider(tokenProviderFn);
+  }, []); // Empty dependency array - only set once
 
   // Keep idToken ref updated for logout without causing re-renders
   const idTokenRef = useRef(idToken);

@@ -27,7 +27,7 @@ function getShoppingCartApiUrl(): string {
  */
 export async function createCustomer(customer: CustomerInput): Promise<Customer> {
   const baseUrl = getShoppingCartApiUrl();
-  const url = `${baseUrl}/v1/customers`;
+  const url = `${baseUrl}/api/v1/customers`;
 
   return post<CustomerInput, Customer>(url, customer, { requiresAuth: true });
 }
@@ -38,7 +38,7 @@ export async function createCustomer(customer: CustomerInput): Promise<Customer>
  */
 export async function getCustomer(id: string): Promise<Customer> {
   const baseUrl = getShoppingCartApiUrl();
-  const url = `${baseUrl}/v1/customers/${encodeURIComponent(id)}`;
+  const url = `${baseUrl}/api/v1/customers/${encodeURIComponent(id)}`;
 
   return get<Customer>(url, { requiresAuth: true });
 }
@@ -49,7 +49,7 @@ export async function getCustomer(id: string): Promise<Customer> {
  */
 export async function updateCustomer(id: string, customer: CustomerInput): Promise<Customer> {
   const baseUrl = getShoppingCartApiUrl();
-  const url = `${baseUrl}/v1/customers/${encodeURIComponent(id)}`;
+  const url = `${baseUrl}/api/v1/customers/${encodeURIComponent(id)}`;
 
   return put<CustomerInput, Customer>(url, customer, { requiresAuth: true });
 }
@@ -83,7 +83,7 @@ export async function createOrderForNewCustomer(
   payload: CreateOrderForNewCustomerPayload
 ): Promise<Order> {
   const baseUrl = getShoppingCartApiUrl();
-  const url = `${baseUrl}/v1/orders`;
+  const url = `${baseUrl}/api/v1/orders`;
 
   return post<CreateOrderForNewCustomerPayload, Order>(url, payload, { requiresAuth: true });
 }
@@ -97,7 +97,7 @@ export async function createOrderForExistingCustomer(
   payload: CreateOrderForExistingCustomerPayload
 ): Promise<Order> {
   const baseUrl = getShoppingCartApiUrl();
-  const url = `${baseUrl}/v1/customers/${encodeURIComponent(customerResourceId)}/orders`;
+  const url = `${baseUrl}/api/v1/customers/${encodeURIComponent(customerResourceId)}/orders`;
 
   return post<CreateOrderForExistingCustomerPayload, Order>(url, payload, { requiresAuth: true });
 }

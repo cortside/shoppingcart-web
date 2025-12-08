@@ -3,6 +3,7 @@ import CatalogPage from '../pages/Catalog';
 import ProductDetailPage from '../pages/ProductDetail';
 import CartPage from '../pages/Cart';
 import CheckoutPage from '../pages/Checkout';
+import OrderConfirmationPage from '../pages/OrderConfirmation';
 import OrdersPage from '../pages/Orders';
 import OrderDetailPage from '../pages/OrderDetail';
 import ProfilePage from '../pages/Profile';
@@ -22,6 +23,14 @@ export function AppRoutes() {
         element={
           <RequireAuth>
             <CheckoutPage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/checkout/confirmation/:orderId"
+        element={
+          <RequireAuth>
+            <OrderConfirmationPage />
           </RequireAuth>
         }
       />

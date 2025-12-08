@@ -4,13 +4,36 @@
  * Per FR-007 through FR-011 and Phase 4 Plan
  */
 
+import { useState, useEffect, useCallback } from 'react';
 import { useCart } from '../../contexts/CartContext';
+import { loadCheckoutData, clearCheckoutData } from '../../utils/storage';
 import CartItem from './components/CartItem';
 import CartSummary from './components/CartSummary';
 import EmptyCart from './components/EmptyCart';
+import SavedCheckoutInfo from './components/SavedCheckoutInfo';
+import type { CustomerInput } from '../../types/Customer';
+import type { Address } from '../../types/Orders';
 
 export default function CartPage() {
   const { items, itemCount, subtotal, updateQuantity, removeItem } = useCart();
+  const [savedCustomerInfo, setSavedCustomerInfo] = useState<CustomerInput | null>(null);
+  const [savedShippingAddress, setSavedShippingAddress] = useState<Address | null>(null);
+
+  // Load saved checkout data on mount
+  useEffect(() => {
+    const savedData = loadCheckoutData();
+    if (savedData) {
+      setSavedCustomerInfo(savedData.customerInfo);
+      setSavedShippingAddress(savedData.shippingAddress);
+    }
+  }, []);
+
+  // Handle clearing saved checkout data
+  const handleClearCheckoutData = useCallback(() => {
+    clearCheckoutData();
+    setSavedCustomerInfo(null);
+    setSavedShippingAddress(null);
+  }, []);
 
   // Show empty cart state if no items
   if (items.length === 0) {
@@ -24,6 +47,13 @@ export default function CartPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Shopping Cart</h1>
+
+      {/* Saved Checkout Information */}
+      <SavedCheckoutInfo
+        customerInfo={savedCustomerInfo}
+        shippingAddress={savedShippingAddress}
+        onClearData={handleClearCheckoutData}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Cart Items Section (2/3 width on desktop) */}

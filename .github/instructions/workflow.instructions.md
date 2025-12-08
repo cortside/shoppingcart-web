@@ -77,8 +77,10 @@ When completing a development phase, follow this workflow:
    - Code builds successfully
    - No linting errors
 
-2. **Testing Complete**
-   - All tests written and passing (100% pass rate)
+2. **Testing Complete** ⚠️
+   - **ALL tests MUST pass (100% pass rate) - NO EXCEPTIONS**
+   - **Failing tests are noise that obscure real issues**
+   - **NEVER skip fixing failing tests - always fix them before proceeding**
    - Test coverage meets requirements
    - Manual testing completed (if applicable)
    - No regressions introduced
