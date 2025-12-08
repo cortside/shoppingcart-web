@@ -351,12 +351,20 @@ Status: Planning - not yet started
 **⚠️ CRITICAL: When work begins, MOVE the plan from planning/ to current/**
 
 ```
-Move: memory-bank/planning/PHASEX_PLAN.md → memory-bank/current/PHASEX_IMPLEMENTATION.md
+Move: memory-bank/planning/PHASEX_PLAN.md → memory-bank/current/PHASEX_PLAN.md
 Update: Change status to "Active"
 Update: Add "Last Updated" date
 Update: Mark first task as [~] in-progress
 Create: Additional notes files as needed (memory-bank/current/phaseX-notes.md)
 ```
+
+**⚠️ AI ASSISTANTS: Do NOT leave duplicate plan documents.**
+
+When moving a plan from `planning/` to `current/`:
+1. Read the original file from `planning/`
+2. Create the new file in `current/` with updated status
+3. Delete the original file from `planning/`
+4. This must be an atomic move operation—NEVER have both files exist simultaneously
 
 **Rationale:**
 
@@ -368,7 +376,7 @@ Create: Additional notes files as needed (memory-bank/current/phaseX-notes.md)
 **During Implementation:**
 
 ```
-Update: memory-bank/current/PHASEX_IMPLEMENTATION.md
+Update: memory-bank/current/PHASEX_PLAN.md
 Frequency: After each task completion, daily/weekly for progress notes
 Update: Todo list status indicators [ ] → [~] → [x]
 Update: "Last Updated" date in header
@@ -380,9 +388,16 @@ Add: Decisions, blockers, solutions, lessons learned
 ```
 Move: memory-bank/current/PHASEX_IMPLEMENTATION.md → docs/completed/PHASEX_IMPLEMENTATION.md
 Keep: Same filename (no renaming)
-Update: docs/README.md with links to new docs
-Update: Root README.md with new features (brief)
+Update: Change status to "Completed" in document header
+Do NOT: Update docs/README.md or create completion tracking lists
 ```
+
+**What NOT to Update When Completing Phases:**
+
+- ❌ Do NOT add "Completed Phases" sections to `docs/README.md`
+- ❌ Do NOT create phase tracking lists or indexes
+- ❌ `docs/README.md` is an index of documentation SECTIONS (requirements/, architecture/, etc.), NOT individual phase files
+- ✅ Completed phase files in `docs/completed/` are self-documenting - they exist there, that's the record
 
 ### Updating Existing Documentation
 
