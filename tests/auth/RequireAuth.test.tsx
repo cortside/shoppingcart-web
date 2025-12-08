@@ -13,6 +13,8 @@ import type { ReactNode } from 'react';
 vi.mock('../../src/auth/oidcClient', () => ({
   initiateLogin: vi.fn(),
   initiateLogout: vi.fn(),
+  getTokenExpiresIn: vi.fn(),
+  silentRenew: vi.fn(),
 }));
 
 // Mock httpClient

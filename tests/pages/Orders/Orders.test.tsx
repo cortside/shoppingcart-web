@@ -212,7 +212,7 @@ describe('Orders', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText(/No customer information found. Please complete checkout/)
+        screen.getByText(/No order history available. To view your orders, please add items to your cart and complete checkout/)
       ).toBeInTheDocument();
     });
   });

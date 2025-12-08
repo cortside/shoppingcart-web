@@ -8,10 +8,35 @@ import { AuthProvider, useAuth } from '../../src/contexts/AuthContext';
 import * as oidcClient from '../../src/auth/oidcClient';
 import type { AuthUser } from '../../src/types/Auth';
 
+// Helper to create a mock JWT token with far-future expiration
+function createMockJWT(payload: Record<string, any> = {}): string {
+  const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+  const farFuture = Math.floor(Date.now() / 1000) + 86400; // 24 hours from now
+  const payloadStr = btoa(JSON.stringify({ exp: farFuture, ...payload }));
+  const signature = btoa('mock-signature');
+  return `${header}.${payloadStr}.${signature}`;
+}
+
+// Helper to create an expired JWT token
+function createExpiredJWT(): string {
+  const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+  const pastTime = Math.floor(Date.now() / 1000) - 3600; // 1 hour ago
+  const payloadStr = btoa(JSON.stringify({ exp: pastTime }));
+  const signature = btoa('mock-signature');
+  return `${header}.${payloadStr}.${signature}`;
+}
+
+// Helper to create a reference token (opaque string)
+function createReferenceToken(): string {
+  return 'F71BEADA62D83CBAD3D2252EB02AE5241F9B80A4433D294503EE272BBE878AB3';
+}
+
 // Mock oidcClient
 vi.mock('../../src/auth/oidcClient', () => ({
   initiateLogin: vi.fn(),
   initiateLogout: vi.fn(),
+  getTokenExpiresIn: vi.fn(() => null), // Return null by default to prevent renewal scheduling
+  silentRenew: vi.fn(() => Promise.resolve(null)), // Return null by default
 }));
 
 // Mock httpClient
@@ -52,8 +77,8 @@ describe('AuthContext', () => {
 
     it('should restore auth state from session storage', () => {
       const authState = {
-        accessToken: 'test_access_token',
-        idToken: 'test_id_token',
+        accessToken: createMockJWT(),
+        idToken: createMockJWT(),
         user: { sub: '123', name: 'John Doe', email: 'john@example.com' },
         customerResourceId: null,
       };
@@ -64,8 +89,8 @@ describe('AuthContext', () => {
       });
 
       expect(result.current.isAuthenticated).toBe(true);
-      expect(result.current.accessToken).toBe('test_access_token');
-      expect(result.current.idToken).toBe('test_id_token');
+      expect(result.current.accessToken).toBe(authState.accessToken);
+      expect(result.current.idToken).toBe(authState.idToken);
       expect(result.current.user).toEqual(authState.user);
     });
 
@@ -115,8 +140,8 @@ describe('AuthContext', () => {
   describe('logout', () => {
     it('should clear auth state and call oidcClient logout', () => {
       const authState = {
-        accessToken: 'test_access_token',
-        idToken: 'test_id_token',
+        accessToken: createMockJWT(),
+        idToken: createMockJWT(),
         user: { sub: '123', name: 'John Doe', email: 'john@example.com' },
         customerResourceId: 'cust-123',
       };
@@ -137,7 +162,7 @@ describe('AuthContext', () => {
       expect(result.current.idToken).toBeNull();
       expect(result.current.user).toBeNull();
       expect(result.current.customerResourceId).toBeNull();
-      expect(mockInitiateLogout).toHaveBeenCalledWith('test_id_token');
+      expect(mockInitiateLogout).toHaveBeenCalledWith(authState.idToken);
       expect(sessionStorageMock['auth_state']).toBeUndefined();
     });
   });
@@ -149,26 +174,28 @@ describe('AuthContext', () => {
       });
 
       const user: AuthUser = { sub: '123', name: 'John Doe', email: 'john@example.com' };
+      const accessToken = createMockJWT();
+      const idToken = createMockJWT();
 
       act(() => {
         result.current.setAuthState({
-          accessToken: 'new_access_token',
-          idToken: 'new_id_token',
+          accessToken,
+          idToken,
           user,
         });
       });
 
       await waitFor(() => {
         expect(result.current.isAuthenticated).toBe(true);
-        expect(result.current.accessToken).toBe('new_access_token');
-        expect(result.current.idToken).toBe('new_id_token');
+        expect(result.current.accessToken).toBe(accessToken);
+        expect(result.current.idToken).toBe(idToken);
         expect(result.current.user).toEqual(user);
       });
 
       // Check persistence
       const stored = JSON.parse(sessionStorageMock['auth_state']);
-      expect(stored.accessToken).toBe('new_access_token');
-      expect(stored.idToken).toBe('new_id_token');
+      expect(stored.accessToken).toBe(accessToken);
+      expect(stored.idToken).toBe(idToken);
       expect(stored.user).toEqual(user);
     });
   });
@@ -176,8 +203,8 @@ describe('AuthContext', () => {
   describe('setCustomerResourceId', () => {
     it('should update customer resource ID', async () => {
       const authState = {
-        accessToken: 'test_access_token',
-        idToken: 'test_id_token',
+        accessToken: createMockJWT(),
+        idToken: createMockJWT(),
         user: { sub: '123', name: 'John Doe', email: 'john@example.com' },
         customerResourceId: null,
       };
@@ -198,6 +225,81 @@ describe('AuthContext', () => {
       // Check persistence
       const stored = JSON.parse(sessionStorageMock['auth_state']);
       expect(stored.customerResourceId).toBe('cust-456');
+    });
+  });
+
+  describe('Token Validation', () => {
+    describe('JWT Tokens', () => {
+      it('should keep auth state with valid (non-expired) JWT token', async () => {
+        const authState = {
+          accessToken: createMockJWT(),
+          idToken: createMockJWT(),
+          user: { sub: '123', name: 'John Doe', email: 'john@example.com' },
+          customerResourceId: null,
+        };
+        sessionStorageMock['auth_state'] = JSON.stringify(authState);
+
+        const { result } = renderHook(() => useAuth(), {
+          wrapper: AuthProvider,
+        });
+
+        // Wait a bit for validation to run
+        await waitFor(() => {
+          expect(result.current.isAuthenticated).toBe(true);
+        });
+
+        // Auth state should still be intact
+        expect(result.current.accessToken).toBe(authState.accessToken);
+        expect(result.current.user).toEqual(authState.user);
+      });
+
+      it('should clear auth state with expired JWT token', async () => {
+        const authState = {
+          accessToken: createExpiredJWT(),
+          idToken: createMockJWT(),
+          user: { sub: '123', name: 'John Doe', email: 'john@example.com' },
+          customerResourceId: null,
+        };
+        sessionStorageMock['auth_state'] = JSON.stringify(authState);
+
+        const { result } = renderHook(() => useAuth(), {
+          wrapper: AuthProvider,
+        });
+
+        // Wait for validation to clear auth state (JWT validation is synchronous, so this is quick)
+        await waitFor(() => {
+          expect(result.current.isAuthenticated).toBe(false);
+        }, { timeout: 100 });
+
+        // After validation, auth should be cleared
+        expect(result.current.accessToken).toBeNull();
+        expect(result.current.user).toBeNull();
+      });
+    });
+
+    describe('Reference Tokens', () => {
+      it('should not validate reference tokens client-side (skips validation)', async () => {
+        const referenceToken = createReferenceToken();
+        const authState = {
+          accessToken: referenceToken,
+          idToken: createMockJWT(),
+          user: { sub: '123', name: 'John Doe', email: 'john@example.com' },
+          customerResourceId: null,
+        };
+        sessionStorageMock['auth_state'] = JSON.stringify(authState);
+
+        const { result } = renderHook(() => useAuth(), {
+          wrapper: AuthProvider,
+        });
+
+        // Auth state should remain intact (reference tokens are not validated client-side)
+        await waitFor(() => {
+          expect(result.current.isAuthenticated).toBe(true);
+        });
+
+        expect(result.current.accessToken).toBe(referenceToken);
+        expect(result.current.user).toEqual(authState.user);
+      });
     });
   });
 

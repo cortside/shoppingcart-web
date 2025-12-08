@@ -7,7 +7,7 @@
 
 import { createContext, useContext, useState, useMemo, useEffect, useCallback, useRef, type ReactNode } from 'react';
 import { setTokenProvider } from '../utils/httpClient';
-import { initiateLogin as oidcLogin, initiateLogout as oidcLogout } from '../auth/oidcClient';
+import { initiateLogin as oidcLogin, initiateLogout as oidcLogout, silentRenew, getTokenExpiresIn } from '../auth/oidcClient';
 import type { AuthUser } from '../types/Auth';
 
 interface AuthContextValue {
@@ -79,6 +79,84 @@ function clearAuthState(): void {
   }
 }
 
+/**
+ * Check if a token is a JWT (has three parts separated by dots)
+ */
+function isJWT(token: string): boolean {
+  return token.split('.').length === 3;
+}
+
+/**
+ * Check if JWT token is expired
+ * @param token - JWT token string
+ * @returns true if token is expired or invalid
+ */
+function checkJWTExpiration(token: string): boolean {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      return true; // Invalid JWT format
+    }
+
+    // Decode payload (middle part)
+    const payload = parts[1];
+    let base64 = payload.replaceAll('-', '+').replaceAll('_', '/');
+    while (base64.length % 4 !== 0) {
+      base64 += '=';
+    }
+    const decoded = atob(base64);
+    const claims = JSON.parse(decoded) as { exp?: number };
+
+    if (!claims.exp) {
+      return true; // No expiration claim
+    }
+
+    const now = Math.floor(Date.now() / 1000);
+    return now >= claims.exp;
+  } catch {
+    return true; // If we can't decode, assume expired
+  }
+}
+
+/**
+ * Validate reference token with IdentityServer introspection endpoint
+ * Note: This function is not currently used because introspection endpoints
+ * cannot be called from browser clients due to CORS restrictions and the need
+ * for client credentials. Reference tokens are validated by backend APIs instead.
+ *
+ * @param token - Reference token string
+ * @param authority - IdentityServer authority URL
+ * @returns true if token is valid and not expired, null if validation failed due to network error
+ */
+/* Disabled - introspection cannot be called from browser
+async function validateReferenceToken(token: string, authority: string): Promise<boolean | null> {
+  try {
+    // Call introspection endpoint
+    // Note: This requires the client to be configured for introspection in IdentityServer
+    const response = await fetch(`${authority}/connect/introspect`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        token,
+        token_type_hint: 'access_token',
+      }),
+    });
+
+    if (!response.ok) {
+      return false;
+    }
+
+    const result = await response.json() as { active: boolean };
+    return result.active === true;
+  } catch (error) {
+    console.warn('Failed to validate reference token:', error);
+    return null; // Return null to indicate validation error (not invalid token)
+  }
+}
+*/
+
 interface AuthProviderProps {
   readonly children: ReactNode;
 }
@@ -136,6 +214,121 @@ export function AuthProvider({ children }: AuthProviderProps) {
     idTokenRef.current = idToken;
   }, [idToken]);
 
+  // Token renewal timer ref
+  const renewalTimerRef = useRef<number | null>(null);
+
+  // Ref for scheduleTokenRenewal function to avoid circular dependency
+  const scheduleRenewalRef = useRef<((token: string) => void) | null>(null);
+
+  /**
+   * Perform silent token renewal
+   */
+  const performRenewal = useCallback(async () => {
+    if (import.meta.env.DEV) {
+      console.log('Attempting silent token renewal...');
+    }
+
+    try {
+      const result = await silentRenew();
+      if (result) {
+        // Renewal succeeded - update tokens
+        setAccessToken(result.accessToken);
+        setIdToken(result.idToken);
+        setUser(result.user);
+
+        if (import.meta.env.DEV) {
+          console.log('Silent token renewal successful');
+        }
+
+        return result.accessToken;
+      } else {
+        // Renewal failed - user needs to re-authenticate
+        if (import.meta.env.DEV) {
+          console.warn('Silent token renewal failed - user needs to re-authenticate');
+        }
+        // Clear auth state
+        setIsAuthenticated(false);
+        setAccessToken(null);
+        setIdToken(null);
+        setUser(null);
+        setCustomerResourceId(null);
+        return null;
+      }
+    } catch (error) {
+      if (import.meta.env.DEV) {
+        console.error('Error during silent token renewal:', error);
+      }
+      // Clear auth state on error
+      setIsAuthenticated(false);
+      setAccessToken(null);
+      setIdToken(null);
+      setUser(null);
+      setCustomerResourceId(null);
+      return null;
+    }
+  }, []);
+
+  /**
+   * Schedule token renewal before expiration
+   * Renews tokens 5 minutes before they expire
+   */
+  const scheduleTokenRenewal = useCallback(
+    (token: string) => {
+      // Clear existing timer
+      if (renewalTimerRef.current !== null) {
+        globalThis.clearTimeout(renewalTimerRef.current);
+        renewalTimerRef.current = null;
+      }
+
+      // Get token expiration time
+      const expiresIn = getTokenExpiresIn(token);
+      if (expiresIn === null) {
+        // Not a JWT or no expiration - can't schedule renewal
+        if (import.meta.env.DEV) {
+          console.log('Token renewal not scheduled - not a JWT or no expiration claim');
+        }
+        return;
+      }
+
+      // Schedule renewal 5 minutes before expiration (or immediately if < 5 min remaining)
+      const RENEW_BEFORE_SECONDS = 5 * 60; // 5 minutes
+      const renewIn = Math.max(0, expiresIn - RENEW_BEFORE_SECONDS);
+
+      if (import.meta.env.DEV) {
+        console.log(`Token renewal scheduled in ${renewIn} seconds (expires in ${expiresIn} seconds)`);
+      }
+
+      renewalTimerRef.current = globalThis.setTimeout(async () => {
+        const newToken = await performRenewal();
+        // If renewal succeeded, schedule the next one using ref
+        if (newToken && scheduleRenewalRef.current) {
+          scheduleRenewalRef.current(newToken);
+        }
+      }, renewIn * 1000);
+    },
+    [performRenewal]
+  );
+
+  // Keep ref updated in useEffect
+  useEffect(() => {
+    scheduleRenewalRef.current = scheduleTokenRenewal;
+  }, [scheduleTokenRenewal]);
+
+  // Schedule token renewal when accessToken changes
+  useEffect(() => {
+    if (accessToken && isAuthenticated) {
+      scheduleTokenRenewal(accessToken);
+    }
+
+    // Cleanup timer on unmount or when token changes
+    return () => {
+      if (renewalTimerRef.current !== null) {
+        globalThis.clearTimeout(renewalTimerRef.current);
+        renewalTimerRef.current = null;
+      }
+    };
+  }, [accessToken, isAuthenticated, scheduleTokenRenewal]);
+
   // Persist auth state to sessionStorage whenever it changes
   useEffect(() => {
     if (isAuthenticated && accessToken && idToken && user) {
@@ -149,6 +342,59 @@ export function AuthProvider({ children }: AuthProviderProps) {
       clearAuthState();
     }
   }, [isAuthenticated, accessToken, idToken, user, customerResourceId]);
+
+  // Validate token on mount and when accessToken changes
+  useEffect(() => {
+    if (!accessToken) return;
+
+    let cancelled = false;
+
+    const validateToken = async () => {
+      try {
+        let isExpired = false;
+
+        if (isJWT(accessToken)) {
+          // JWT token - validate client-side
+          isExpired = checkJWTExpiration(accessToken);
+          if (import.meta.env.DEV && isExpired) {
+            console.warn('JWT access token expired');
+          }
+        } else {
+          // Reference token - cannot validate client-side
+          // Reference tokens are opaque and must be validated by the backend API
+          // The introspection endpoint requires client credentials and cannot be called from browser
+          // Browser will get CORS errors trying to call the introspection endpoint
+          // Skip validation and let the backend APIs validate the token when used
+          if (import.meta.env.DEV) {
+            console.log('Reference token detected - validation will be performed by backend APIs');
+          }
+          return;
+        }
+
+        if (cancelled) return;
+
+        if (isExpired) {
+          // Token is expired/invalid, clear auth state
+          setIsAuthenticated(false);
+          setAccessToken(null);
+          setIdToken(null);
+          setUser(null);
+          setCustomerResourceId(null);
+        }
+      } catch (error) {
+        // Validation failed, but don't clear auth state for network errors
+        if (import.meta.env.DEV) {
+          console.warn('Token validation error:', error);
+        }
+      }
+    };
+
+    validateToken();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [accessToken]);
 
   /**
    * Set authentication state after successful login

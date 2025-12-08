@@ -9,6 +9,7 @@ import OrderDetailPage from '../pages/OrderDetail';
 import ProfilePage from '../pages/Profile';
 import LoginPage from '../pages/Login';
 import AuthCallbackPage from '../pages/AuthCallback';
+import SilentCallbackPage from '../pages/SilentCallback';
 import { RequireAuth } from '../auth/RequireAuth';
 
 export function AppRoutes() {
@@ -60,6 +61,7 @@ export function AppRoutes() {
       />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/auth/callback" element={<AuthCallbackPage />} />
+      <Route path="/auth/silent-callback" element={<SilentCallbackPage />} />
     </Routes>
   );
 }

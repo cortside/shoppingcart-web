@@ -73,6 +73,72 @@ interface Props {
 
 ---
 
+## ⚠️ CRITICAL: Component Creation Checklist
+
+**When creating ANY React component, follow this checklist to ensure proper implementation:**
+
+### Required Steps for Every Component
+
+1. ✅ **Use functional component** (not class component)
+2. ✅ **Define `ComponentNameProps` interface** with `readonly` props
+3. ✅ **Add JSDoc comment** explaining component purpose
+4. ✅ **MEMOIZATION CHECK** - Ask these questions:
+   - Does this component receive callback props (`onClick`, `onSave`, `onEdit`, etc.)? → **MUST wrap in `memo`**
+   - Is this a pure presentational component (just displays data)? → **SHOULD wrap in `memo`**
+   - Does this render expensive child trees or large lists? → **MUST wrap in `memo`**
+   - Is this a list item component (used in `.map()`)? → **MUST wrap in `memo`**
+   - If ANY of the above is YES → **Wrap component in `React.memo`**
+5. ✅ **All callbacks passed as props** must be wrapped in `useCallback` in parent
+6. ✅ **Expensive computations** wrapped in `useMemo`
+
+### Memoization Decision Tree
+
+```
+Is this component receiving callback props?
+├─ YES → Wrap in memo()
+└─ NO → Is it a pure presentational component?
+    ├─ YES → Wrap in memo()
+    └─ NO → Is it rendering expensive child trees?
+        ├─ YES → Wrap in memo()
+        └─ NO → No memo needed (simple component)
+```
+
+### Example: Correct Component Implementation
+
+```tsx
+import { memo } from 'react';
+
+interface UserCardProps {
+  readonly user: User;
+  readonly onEdit: (id: string) => void;
+}
+
+/**
+ * UserCard Component
+ * Displays user information with edit functionality
+ */
+export const UserCard = memo(function UserCard({ user, onEdit }: UserCardProps) {
+  return (
+    <div>
+      <h3>{user.name}</h3>
+      <button onClick={() => onEdit(user.id)}>Edit</button>
+    </div>
+  );
+});
+
+UserCard.displayName = 'UserCard';
+
+export default UserCard;
+```
+
+**Why this matters:**
+- ✅ Component only re-renders when props actually change
+- ✅ Prevents cascade re-renders in parent-child hierarchies
+- ✅ Improves performance, especially in lists and complex UIs
+- ✅ Makes `useCallback` in parent components effective
+
+---
+
 ## Performance Optimization
 
 ### CRITICAL: Memoization Requirements

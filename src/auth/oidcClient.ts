@@ -191,3 +191,132 @@ function generateRandomString(length: number): string {
   crypto.getRandomValues(array);
   return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join('');
 }
+
+/**
+ * Get token expiration time in seconds from now
+ * @param token - JWT token
+ * @returns Seconds until expiration, or null if not a JWT or no expiration claim
+ */
+export function getTokenExpiresIn(token: string): number | null {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      return null; // Not a JWT
+    }
+
+    const payload = parts[1];
+    const decoded = base64UrlDecode(payload);
+    const claims = JSON.parse(decoded) as { exp?: number };
+
+    if (!claims.exp) {
+      return null; // No expiration claim
+    }
+
+    const now = Math.floor(Date.now() / 1000);
+    const expiresIn = claims.exp - now;
+
+    return Math.max(0, expiresIn);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Perform silent token renewal using hidden iframe
+ * Uses OIDC prompt=none to request new tokens without user interaction
+ * @returns Promise with new tokens, or null if renewal failed
+ */
+export async function silentRenew(): Promise<{ accessToken: string; idToken: string; user: AuthUser } | null> {
+  const config = getConfig();
+  const { authority, clientId, scope } = config.identity;
+
+  return new Promise((resolve) => {
+    // Create hidden iframe for silent renewal
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.style.position = 'absolute';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+
+    // Build redirect URI for silent renewal callback
+    const redirectUri = `${globalThis.location.origin}/auth/silent-callback`;
+
+    // Build authorization URL with prompt=none for silent renewal
+    const params = new URLSearchParams({
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      response_type: 'id_token token',
+      scope: scope,
+      nonce: generateNonce(),
+      state: generateState(),
+      prompt: 'none', // Critical: prevents user interaction
+    });
+
+    const authUrl = `${authority}/connect/authorize?${params.toString()}`;
+
+    // Set up timeout for renewal attempt
+    const timeout = setTimeout(() => {
+      cleanup();
+      if (import.meta.env.DEV) {
+        console.warn('Silent token renewal timed out');
+      }
+      resolve(null);
+    }, 10000); // 10 second timeout
+
+    // Listen for message from iframe
+    const messageHandler = (event: MessageEvent) => {
+      // Verify origin
+      if (event.origin !== globalThis.location.origin) {
+        return;
+      }
+
+      // Check if this is our renewal response
+      if (event.data?.type === 'silent-renewal') {
+        handleRenewalResponse(event.data);
+      }
+    };
+
+    // Handle renewal response (extracted to reduce complexity)
+    const handleRenewalResponse = (data: { success?: boolean; tokens?: { accessToken: string; idToken: string }; error?: string }) => {
+      cleanup();
+
+      if (data.success && data.tokens) {
+        const { accessToken, idToken } = data.tokens;
+        try {
+          const user = decodeIdToken(idToken);
+          resolve({ accessToken, idToken, user });
+        } catch (error) {
+          if (import.meta.env.DEV) {
+            console.error('Failed to decode renewed ID token:', error);
+          }
+          resolve(null);
+        }
+      } else {
+        if (import.meta.env.DEV) {
+          console.warn('Silent renewal failed:', data.error);
+        }
+        resolve(null);
+      }
+    };
+
+    // Cleanup function
+    const cleanup = () => {
+      clearTimeout(timeout);
+      window.removeEventListener('message', messageHandler);
+      if (iframe.parentNode) {
+        iframe.remove();
+      }
+    };
+
+    // Register message handler
+    window.addEventListener('message', messageHandler);
+
+    // Start renewal by loading iframe
+    iframe.src = authUrl;
+    document.body.appendChild(iframe);
+
+    if (import.meta.env.DEV) {
+      console.log('Starting silent token renewal');
+    }
+  });
+}

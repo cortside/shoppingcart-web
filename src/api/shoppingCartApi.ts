@@ -118,7 +118,7 @@ export interface ListOrdersParams {
  */
 export async function listOrders(params: ListOrdersParams): Promise<PagedResult<Order>> {
   const baseUrl = getShoppingCartApiUrl();
-  const url = `${baseUrl}/v1/orders`;
+  const url = `${baseUrl}/api/v1/orders`;
 
   return get<PagedResult<Order>>(url, {
     params: {
@@ -137,7 +137,7 @@ export async function listOrders(params: ListOrdersParams): Promise<PagedResult<
  */
 export async function getOrder(id: string): Promise<Order> {
   const baseUrl = getShoppingCartApiUrl();
-  const url = `${baseUrl}/v1/orders/${encodeURIComponent(id)}`;
+  const url = `${baseUrl}/api/v1/orders/${encodeURIComponent(id)}`;
 
   return get<Order>(url, { requiresAuth: true });
 }

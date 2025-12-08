@@ -13,6 +13,8 @@ import { CartProvider } from '../../../src/contexts/CartContext';
 vi.mock('../../../src/auth/oidcClient', () => ({
   initiateLogin: vi.fn(),
   initiateLogout: vi.fn(),
+  getTokenExpiresIn: vi.fn(),
+  silentRenew: vi.fn(),
 }));
 
 // Mock httpClient

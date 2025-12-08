@@ -15,6 +15,8 @@ vi.mock('../../../src/auth/oidcClient', () => ({
   getReturnUrl: vi.fn(() => '/'),
   initiateLogin: vi.fn(),
   initiateLogout: vi.fn(),
+  getTokenExpiresIn: vi.fn(),
+  silentRenew: vi.fn(),
 }));
 
 // Mock httpClient

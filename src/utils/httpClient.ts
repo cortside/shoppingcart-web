@@ -137,6 +137,8 @@ export async function get<TResponse>(
     const token = getAccessToken();
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
+    } else {
+      console.warn('Auth required but no token available');
     }
   }
 
