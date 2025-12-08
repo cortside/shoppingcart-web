@@ -72,6 +72,9 @@ src/
   components/
     common/
     layout/
+  hooks/
+    useAuth.ts
+    useCart.ts
   contexts/
     AuthContext.tsx
     CartContext.tsx
